@@ -1,0 +1,190 @@
+@import "tailwindcss";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/* ─────────────────────────────────────────
+   KEYFRAMES
+───────────────────────────────────────── */
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shake {
+  0% {
+    transform: translateX(0);
+  }
+
+  20% {
+    transform: translateX(-6px);
+  }
+
+  40% {
+    transform: translateX(6px);
+  }
+
+  60% {
+    transform: translateX(-4px);
+  }
+
+  80% {
+    transform: translateX(4px);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+/* Floating orb on left panel */
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+
+  33% {
+    transform: translateY(-18px) rotate(1.5deg);
+  }
+
+  66% {
+    transform: translateY(-8px) rotate(-1deg);
+  }
+}
+
+/* Accent bar grows in on load */
+@keyframes barGrow {
+  from {
+    width: 0;
+    opacity: 0;
+  }
+
+  to {
+    width: 96px;
+    opacity: 1;
+  }
+}
+
+/* Tiny floating particles */
+@keyframes particleDrift {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0.6;
+  }
+
+  50% {
+    transform: translateY(-50px) scale(1.1);
+    opacity: 0.3;
+  }
+
+  100% {
+    transform: translateY(-100px) scale(0.8);
+    opacity: 0;
+  }
+}
+
+/* ─────────────────────────────────────────
+   UTILITY CLASSES
+───────────────────────────────────────── */
+
+.animate-slideUp {
+  animation: slideUp 0.7s cubic-bezier(.22, 1, .36, 1) both;
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.9s cubic-bezier(.22, 1, .36, 1) both;
+}
+
+.animate-shake {
+  animation: shake 0.4s ease;
+}
+
+.animate-float {
+  animation: float 7s ease-in-out infinite;
+}
+
+.animate-barGrow {
+  animation: barGrow 1s ease 0.6s both;
+}
+
+.animate-particleDrift {
+  animation: particleDrift 6s ease-in infinite;
+}
+
+/* Animation delay helpers */
+.delay-100 {
+  animation-delay: 0.10s;
+}
+
+.delay-200 {
+  animation-delay: 0.20s;
+}
+
+.delay-300 {
+  animation-delay: 0.30s;
+}
+
+.delay-400 {
+  animation-delay: 0.40s;
+}
+
+.delay-500 {
+  animation-delay: 0.50s;
+}
+
+.delay-600 {
+  animation-delay: 0.60s;
+}
+
+.delay-700 {
+  animation-delay: 0.70s;
+}
+
+/* ─────────────────────────────────────────
+   BASE / GLOBAL
+───────────────────────────────────────── */
+
+html,
+body,
+#root {
+  height: 100%;
+  font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+}
+
+/* smooth scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
