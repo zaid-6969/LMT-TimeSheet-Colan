@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 
 import {
   ChevronLeft,
@@ -9,16 +9,25 @@ import {
   CircleCheckBig,
   TriangleAlert,
   ListTodo,
+  Search,
+  X,
+  Plus,
+  MoreVertical,
+  Eye,
+  Pencil,
+  Trash2,
+  BellOff,
+  BellRing,
+  Loader,
 } from "lucide-react";
 
-// ================= DUMMY TODO EVENTS =================
+/* ───────────────────────────────────────────── */
 
 const todoEvents = {
   "2026-05-05": [
     {
       title: "Client Meeting",
-      description:
-        "Discuss ERP dashboard improvements with client.",
+      description: "Discuss ERP dashboard improvements with client.",
       time: "10:00 AM",
       status: "Pending",
       notification: true,
@@ -26,8 +35,7 @@ const todoEvents = {
 
     {
       title: "UI Development",
-      description:
-        "Complete timesheet dashboard responsive design.",
+      description: "Complete timesheet dashboard responsive design.",
       time: "2:00 PM",
       status: "Completed",
       notification: false,
@@ -37,8 +45,7 @@ const todoEvents = {
   "2026-05-12": [
     {
       title: "Bug Fixing",
-      description:
-        "Fix sidebar collapse animation issues.",
+      description: "Fix sidebar collapse animation issues.",
       time: "11:30 AM",
       status: "In Progress",
       notification: true,
@@ -48,8 +55,7 @@ const todoEvents = {
   "2026-05-21": [
     {
       title: "Testing",
-      description:
-        "Test To-Do calendar responsiveness.",
+      description: "Test To-Do calendar responsiveness.",
       time: "9:00 AM",
       status: "Pending",
       notification: true,
@@ -57,14 +63,15 @@ const todoEvents = {
 
     {
       title: "Deployment",
-      description:
-        "Deploy latest employee dashboard updates.",
+      description: "Deploy latest employee dashboard updates.",
       time: "4:00 PM",
       status: "Completed",
       notification: false,
     },
   ],
 };
+
+/* ───────────────────────────────────────────── */
 
 const months = [
   "January",
@@ -81,31 +88,182 @@ const months = [
   "December",
 ];
 
+const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+/* ───────────────────────────────────────────── */
+
+function StatusBadge({ status }) {
+  const styles = {
+    Completed: {
+      cls: "bg-emerald-50 text-emerald-700",
+      Icon: CircleCheckBig,
+    },
+
+    "In Progress": {
+      cls: "bg-blue-50 text-blue-700",
+      Icon: Loader,
+    },
+
+    Pending: {
+      cls: "bg-amber-50 text-amber-700",
+      Icon: TriangleAlert,
+    },
+  };
+
+  const { cls, Icon } = styles[status] || styles.Pending;
+
+  return (
+    <span
+      className={`
+        inline-flex
+        items-center
+        gap-1.5
+        rounded-full
+        px-3
+        py-1
+        text-[11px]
+        font-semibold
+        ${cls}
+      `}
+    >
+      <Icon size={11} />
+
+      {status}
+    </span>
+  );
+}
+
+/* ───────────────────────────────────────────── */
+
+function ActionMenu() {
+  const [open, setOpen] = useState(false);
+
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const handler = (e) => {
+      if (ref.current && !ref.current.contains(e.target)) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handler);
+
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  return (
+    <div className="relative" ref={ref}>
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className="
+          flex
+          h-9
+          w-9
+          items-center
+          justify-center
+          rounded-xl
+          border
+          border-slate-200
+          bg-white
+          text-slate-500
+          transition-all
+          hover:bg-slate-50
+        "
+      >
+        <MoreVertical size={15} />
+      </button>
+
+      {open && (
+        <div
+          className="
+            absolute
+            right-0
+            top-11
+            z-50
+            min-w-[140px]
+            overflow-hidden
+            rounded-2xl
+            border
+            border-slate-200
+            bg-white
+            shadow-xl
+          "
+        >
+          <button
+            className="
+              flex
+              w-full
+              items-center
+              gap-2
+              px-4
+              py-3
+              text-sm
+              text-slate-600
+              hover:bg-slate-50
+            "
+          >
+            <Eye size={14} />
+            View
+          </button>
+
+          <button
+            className="
+              flex
+              w-full
+              items-center
+              gap-2
+              px-4
+              py-3
+              text-sm
+              text-slate-600
+              hover:bg-slate-50
+            "
+          >
+            <Pencil size={14} />
+            Edit
+          </button>
+
+          <button
+            className="
+              flex
+              w-full
+              items-center
+              gap-2
+              px-4
+              py-3
+              text-sm
+              text-red-600
+              hover:bg-red-50
+            "
+          >
+            <Trash2 size={14} />
+            Delete
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ───────────────────────────────────────────── */
+
 export default function CalendarToDo() {
   const today = new Date();
 
-  const [currentMonth, setCurrentMonth] =
-    useState(today.getMonth());
+  const [currentMonth, setCurrentMonth] = useState(today.getMonth());
 
-  const [currentYear, setCurrentYear] =
-    useState(today.getFullYear());
+  const [currentYear, setCurrentYear] = useState(today.getFullYear());
 
-  const [selectedDate, setSelectedDate] =
-    useState("2026-05-21");
+  const [selectedDate, setSelectedDate] = useState("2026-05-21");
 
-  // ================= CALENDAR =================
+  const [search, setSearch] = useState("");
 
-  const daysInMonth = new Date(
-    currentYear,
-    currentMonth + 1,
-    0
-  ).getDate();
+  /* ───────────────────────────────────────── */
 
-  const firstDay = new Date(
-    currentYear,
-    currentMonth,
-    1
-  ).getDay();
+  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+  const firstDay = new Date(currentYear, currentMonth, 1).getDay();
 
   const calendarDays = [];
 
@@ -117,221 +275,302 @@ export default function CalendarToDo() {
     calendarDays.push(day);
   }
 
-  // ================= MONTH NAVIGATION =================
+  /* ───────────────────────────────────────── */
 
   const prevMonth = () => {
     if (currentMonth === 0) {
       setCurrentMonth(11);
-      setCurrentYear((prev) => prev - 1);
+
+      setCurrentYear((p) => p - 1);
     } else {
-      setCurrentMonth((prev) => prev - 1);
+      setCurrentMonth((p) => p - 1);
     }
   };
 
   const nextMonth = () => {
     if (currentMonth === 11) {
       setCurrentMonth(0);
-      setCurrentYear((prev) => prev + 1);
+
+      setCurrentYear((p) => p + 1);
     } else {
-      setCurrentMonth((prev) => prev + 1);
+      setCurrentMonth((p) => p + 1);
     }
   };
 
-  // ================= SELECT DATE =================
+  /* ───────────────────────────────────────── */
 
   const handleSelectDate = (day) => {
-    const formattedMonth = String(
-      currentMonth + 1
-    ).padStart(2, "0");
+    const formattedMonth = String(currentMonth + 1).padStart(2, "0");
 
-    const formattedDay = String(day).padStart(
-      2,
-      "0"
-    );
+    const formattedDay = String(day).padStart(2, "0");
 
-    setSelectedDate(
-      `${currentYear}-${formattedMonth}-${formattedDay}`
-    );
+    setSelectedDate(`${currentYear}-${formattedMonth}-${formattedDay}`);
   };
 
-  const selectedTodos =
-    todoEvents[selectedDate] || [];
+  /* ───────────────────────────────────────── */
+
+  const selectedTodos = todoEvents[selectedDate] || [];
+
+  const filteredTodos = useMemo(() => {
+    if (!search.trim()) return selectedTodos;
+
+    return selectedTodos.filter(
+      (todo) =>
+        todo.title.toLowerCase().includes(search.toLowerCase()) ||
+        todo.description.toLowerCase().includes(search.toLowerCase()),
+    );
+  }, [selectedTodos, search]);
+
+  /* ───────────────────────────────────────── */
+
+  const todayString = `${today.getFullYear()}-${String(
+    today.getMonth() + 1,
+  ).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+
+  /* ───────────────────────────────────────── */
 
   return (
-    <div className="min-h-screen bg-[#f3f6fb] p-4 md:p-6 font-sans">
-      {/* ================= HEADER ================= */}
-
-      <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
+    <div className="space-y-6">
+      {/* HEADER */}
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         {/* LEFT */}
-
         <div>
-          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-[#1565A830] bg-[#1565A810] px-3 py-1">
-            <div className="h-2 w-2 rounded-full bg-cyan-400 shadow-[0_0_10px_#00c8e0]" />
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-600">
+            Employee Planner
+          </p>
 
-            <span className="text-[11px] font-extrabold uppercase tracking-[0.12em] text-[#1565A8]">
-              Employee Planner
-            </span>
-          </div>
-
-          <h1 className="text-[30px] font-extrabold text-slate-800">
+          <h1 className="mt-2 text-3xl font-bold tracking-tight text-slate-900">
             To-Do Calendar
           </h1>
 
-          <p className="mt-1 text-sm text-slate-500">
-            Manage employee reminders and schedules
-            visually.
+          <p className="mt-2 text-sm text-slate-500">
+            Manage employee reminders, schedules and planning visually.
           </p>
         </div>
 
         {/* RIGHT */}
-
         <div className="flex items-center gap-2">
           <button
             onClick={prevMonth}
-            className="flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:border-blue-400 hover:text-blue-600"
+            className="
+              flex
+              h-10
+              w-10
+              items-center
+              justify-center
+              rounded-xl
+              border
+              border-slate-200
+              bg-white
+              text-slate-600
+              transition-all
+              hover:bg-slate-50
+            "
           >
-            <ChevronLeft size={18} />
+            <ChevronLeft size={16} />
           </button>
 
-          <div className="flex h-11 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 text-sm font-bold text-slate-700 shadow-sm">
-            <CalendarDays
-              size={15}
-              className="text-blue-600"
-            />
-
+          <div
+            className="
+              flex
+              h-10
+              items-center
+              gap-2
+              rounded-xl
+              border
+              border-slate-200
+              bg-white
+              px-5
+              text-sm
+              font-semibold
+              text-slate-700
+            "
+          >
+            <CalendarDays size={15} className="text-blue-600" />
             {months[currentMonth]} {currentYear}
           </div>
 
           <button
             onClick={nextMonth}
-            className="flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:border-blue-400 hover:text-blue-600"
+            className="
+              flex
+              h-10
+              w-10
+              items-center
+              justify-center
+              rounded-xl
+              border
+              border-slate-200
+              bg-white
+              text-slate-600
+              transition-all
+              hover:bg-slate-50
+            "
           >
-            <ChevronRight size={18} />
+            <ChevronRight size={16} />
+          </button>
+
+          <button
+            className="
+              flex
+              h-10
+              items-center
+              gap-2
+              rounded-xl
+              bg-blue-600
+              px-5
+              text-sm
+              font-semibold
+              text-white
+              transition-all
+              hover:bg-blue-700
+            "
+          >
+            <Plus size={15} />
+            Add Event
           </button>
         </div>
       </div>
 
-      {/* ================= MAIN GRID ================= */}
-
-      <div className="grid grid-cols-1 xl:grid-cols-[1fr_380px] gap-5">
-        {/* ================= CALENDAR ================= */}
-
-        <div className="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_8px_30px_rgba(15,23,42,0.04)]">
+      {/* MAIN */}
+      <div className="grid grid-cols-1 gap-5 xl:grid-cols-[1fr_380px]">
+        {/* CALENDAR */}
+        <div
+          className="
+            overflow-hidden
+            rounded-[24px]
+            border
+            border-slate-200
+            bg-white
+            shadow-sm
+          "
+        >
           {/* DAYS */}
-
-          <div className="grid grid-cols-7 border-b border-slate-100 bg-slate-50">
-            {[
-              "Sun",
-              "Mon",
-              "Tue",
-              "Wed",
-              "Thu",
-              "Fri",
-              "Sat",
-            ].map((day) => (
+          <div className="grid grid-cols-7 border-b border-slate-200 bg-slate-50">
+            {days.map((day, i) => (
               <div
                 key={day}
-                className="
-                py-4
-                text-center
-                text-[11px]
-                font-extrabold
-                uppercase
-                tracking-[0.08em]
-                text-slate-400
-              "
+                className={`
+                  py-4
+                  text-center
+                  text-[11px]
+                  font-semibold
+                  uppercase
+                  tracking-[0.12em]
+
+                  ${i === 0 || i === 6 ? "text-red-500" : "text-slate-400"}
+                `}
               >
                 {day}
               </div>
             ))}
           </div>
 
-          {/* CALENDAR BODY */}
-
+          {/* BODY */}
           <div className="grid grid-cols-7">
             {calendarDays.map((day, index) => {
-              const formattedMonth = String(
-                currentMonth + 1
-              ).padStart(2, "0");
+              if (!day) {
+                return (
+                  <div
+                    key={index}
+                    className="
+                        min-h-[130px]
+                        border-b
+                        border-r
+                        border-slate-100
+                        bg-slate-50/40
+                      "
+                  />
+                );
+              }
 
-              const formattedDay = String(
-                day
-              ).padStart(2, "0");
+              const formattedMonth = String(currentMonth + 1).padStart(2, "0");
+
+              const formattedDay = String(day).padStart(2, "0");
 
               const fullDate = `${currentYear}-${formattedMonth}-${formattedDay}`;
 
-              const hasEvents =
-                todoEvents[fullDate];
+              const hasEvents = todoEvents[fullDate];
 
-              const isSelected =
-                selectedDate === fullDate;
+              const isSelected = selectedDate === fullDate;
+
+              const isToday = todayString === fullDate;
 
               return (
                 <button
                   key={index}
-                  disabled={!day}
-                  onClick={() =>
-                    handleSelectDate(day)
-                  }
+                  onClick={() => handleSelectDate(day)}
                   className={`
-                  relative
-                  min-h-[120px]
-                  border-b border-r border-slate-100
-                  p-3
-                  text-left
-                  transition-all duration-300
+                      relative
+                      min-h-[130px]
+                      border-b
+                      border-r
+                      border-slate-100
+                      p-3
+                      text-left
+                      transition-all
 
-                  ${
-                    day
-                      ? "hover:bg-blue-50/60"
-                      : "bg-slate-50/30 cursor-default"
-                  }
-
-                  ${
-                    isSelected
-                      ? "bg-gradient-to-br from-blue-50 to-cyan-50"
-                      : ""
-                  }
-                `}
+                      ${isSelected ? "bg-blue-50/60" : "hover:bg-blue-50/30"}
+                    `}
                 >
-                  {day && (
-                    <>
-                      {/* DATE */}
-
-                      <div
-                        className={`
-                        flex h-10 w-10 items-center justify-center rounded-2xl text-sm font-bold transition-all
+                  {/* DATE */}
+                  <div
+                    className={`
+                        flex
+                        h-9
+                        w-9
+                        items-center
+                        justify-center
+                        rounded-xl
+                        text-sm
+                        font-bold
 
                         ${
                           isSelected
-                            ? "bg-gradient-to-r from-[#0d8bff] to-[#00a6ff] text-white shadow-lg"
-                            : "text-slate-700"
+                            ? "bg-blue-600 text-white"
+                            : isToday
+                              ? "bg-blue-50 text-blue-600"
+                              : "text-slate-700"
                         }
                       `}
-                      >
-                        {day}
-                      </div>
+                  >
+                    {day}
+                  </div>
 
-                      {/* TASK COUNT */}
+                  {/* EVENTS */}
+                  {hasEvents && (
+                    <div className="mt-3 space-y-1.5">
+                      {hasEvents.slice(0, 2).map((event, i) => (
+                        <div
+                          key={i}
+                          className={`
+                                  truncate
+                                  rounded-lg
+                                  border-l-[3px]
+                                  px-2
+                                  py-1
+                                  text-[10px]
+                                  font-semibold
 
-                      {hasEvents && (
-                        <div className="mt-3 space-y-2">
-                          <div
-                            className="
-                            rounded-xl
-                            bg-blue-100
-                            px-2 py-1
-                            text-[10px]
-                            font-bold
-                            text-blue-600
-                            shadow-sm
-                          "
-                          >
-                            {hasEvents.length} To-Do
-                          </div>
+                                  ${
+                                    event.status === "Completed"
+                                      ? "border-emerald-500 bg-emerald-50 text-emerald-700"
+                                      : event.status === "In Progress"
+                                        ? "border-blue-500 bg-blue-50 text-blue-700"
+                                        : "border-amber-500 bg-amber-50 text-amber-700"
+                                  }
+                                `}
+                        >
+                          {event.title}
+                        </div>
+                      ))}
+
+                      {hasEvents.length > 2 && (
+                        <div className="px-1 text-[10px] font-semibold text-slate-400">
+                          +{hasEvents.length - 2} more
                         </div>
                       )}
-                    </>
+                    </div>
                   )}
                 </button>
               );
@@ -339,182 +578,249 @@ export default function CalendarToDo() {
           </div>
         </div>
 
-        {/* ================= RIGHT PANEL ================= */}
-
-        <div className="h-fit overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_8px_30px_rgba(15,23,42,0.04)]">
-          {/* TOP */}
-
-          <div className="border-b border-slate-100 bg-slate-50 p-6">
+        {/* RIGHT PANEL */}
+        <div
+          className="
+            overflow-hidden
+            rounded-[24px]
+            border
+            border-slate-200
+            bg-white
+            shadow-sm
+          "
+        >
+          {/* HEADER */}
+          <div className="border-b border-slate-200 bg-slate-50/60 p-5">
             <div className="flex items-center gap-3">
               <div
                 className="
-              w-14 h-14
-              rounded-2xl
-              bg-blue-50
-              flex items-center justify-center
-            "
+                  flex
+                  h-11
+                  w-11
+                  items-center
+                  justify-center
+                  rounded-xl
+                  bg-blue-50
+                "
               >
-                <CalendarDays
-                  className="text-blue-600"
-                  size={28}
-                />
+                <CalendarDays size={18} className="text-blue-600" />
               </div>
 
               <div>
-                <p className="text-sm text-slate-500">
+                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
                   Selected Date
                 </p>
 
-                <h2 className="text-2xl font-bold text-slate-800">
+                <h2 className="mt-1 text-xl font-bold text-slate-900">
                   {selectedDate}
                 </h2>
               </div>
             </div>
+
+            {selectedTodos.length > 0 && (
+              <div
+                className="
+                  mt-4
+                  inline-flex
+                  items-center
+                  gap-2
+                  rounded-full
+                  bg-blue-50
+                  px-3
+                  py-1.5
+                  text-xs
+                  font-semibold
+                  text-blue-700
+                "
+              >
+                <ListTodo size={12} />
+                {selectedTodos.length} Tasks Scheduled
+              </div>
+            )}
           </div>
 
-          {/* TODO LIST */}
+          {/* SEARCH */}
+          {selectedTodos.length > 0 && (
+            <div className="border-b border-slate-200 p-4">
+              <div
+                className="
+                  relative
+                  flex
+                  h-11
+                  items-center
+                  rounded-xl
+                  border
+                  border-slate-200
+                  bg-white
+                  px-4
+                  focus-within:border-blue-500
+                "
+              >
+                <Search size={15} className="text-slate-400" />
 
-          <div className="space-y-5 p-6">
-            {selectedTodos.length > 0 ? (
-              selectedTodos.map(
-                (todo, index) => (
+                <input
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Search tasks..."
+                  className="
+                    w-full
+                    bg-transparent
+                    px-3
+                    text-sm
+                    text-slate-700
+                    outline-none
+                    placeholder:text-slate-400
+                  "
+                />
+
+                {search && (
+                  <button
+                    onClick={() => setSearch("")}
+                    className="text-slate-400"
+                  >
+                    <X size={14} />
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* TASKS */}
+          <div className="max-h-[720px] overflow-y-auto p-4">
+            {filteredTodos.length > 0 ? (
+              <div className="space-y-3">
+                {filteredTodos.map((todo, index) => (
                   <div
                     key={index}
-                    className="
-                    rounded-3xl
-                    border border-slate-200
-                    bg-white
-                    p-5
-                    shadow-sm
-                    transition-all duration-300
-                    hover:-translate-y-1
-                    hover:shadow-lg
-                  "
+                    className={`
+                        overflow-hidden
+                        rounded-2xl
+                        border
+                        border-slate-200
+                        border-l-[3px]
+                        bg-white
+                        shadow-sm
+
+                        ${
+                          todo.status === "Completed"
+                            ? "border-l-emerald-500"
+                            : todo.status === "In Progress"
+                              ? "border-l-blue-500"
+                              : "border-l-amber-500"
+                        }
+                      `}
                   >
-                    {/* TITLE */}
+                    {/* TOP */}
+                    <div className="flex items-start justify-between gap-3 p-4">
+                      <div className="flex gap-3">
+                        <div
+                          className="
+                              flex
+                              h-10
+                              w-10
+                              items-center
+                              justify-center
+                              rounded-xl
+                              bg-blue-50
+                            "
+                        >
+                          <ListTodo size={17} className="text-blue-600" />
+                        </div>
 
-                    <div className="flex items-start justify-between mb-4">
-                      <div>
-                        <h3 className="text-lg font-bold text-slate-800">
-                          {todo.title}
-                        </h3>
+                        <div>
+                          <h3 className="text-sm font-semibold leading-5 text-slate-800">
+                            {todo.title}
+                          </h3>
 
-                        <p className="text-slate-500 text-sm mt-1 leading-6">
-                          {
-                            todo.description
-                          }
-                        </p>
+                          <p className="mt-1 text-sm leading-6 text-slate-500">
+                            {todo.description}
+                          </p>
+                        </div>
                       </div>
 
-                      {todo.status ===
-                      "Completed" ? (
-                        <div
-                          className="
-                          w-11 h-11
-                          rounded-2xl
-                          bg-emerald-50
-                          flex items-center justify-center
-                        "
-                        >
-                          <CircleCheckBig
-                            size={22}
-                            className="text-emerald-500"
-                          />
+                      <ActionMenu />
+                    </div>
+
+                    {/* FOOTER */}
+                    <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 bg-slate-50/40 px-4 py-3">
+                      {/* META */}
+                      <div className="flex flex-wrap items-center gap-4 text-xs text-slate-500">
+                        <div className="flex items-center gap-1.5">
+                          <Clock3 size={12} />
+
+                          {todo.time}
                         </div>
-                      ) : (
-                        <div
-                          className="
-                          w-11 h-11
-                          rounded-2xl
-                          bg-orange-50
-                          flex items-center justify-center
-                        "
-                        >
-                          <TriangleAlert
-                            size={22}
-                            className="text-orange-500"
-                          />
+
+                        <div className="flex items-center gap-1.5">
+                          {todo.notification ? (
+                            <>
+                              <BellRing size={12} />
+                              Enabled
+                            </>
+                          ) : (
+                            <>
+                              <BellOff size={12} />
+                              Disabled
+                            </>
+                          )}
                         </div>
-                      )}
+                      </div>
+
+                      {/* STATUS */}
+                      <StatusBadge status={todo.status} />
                     </div>
-
-                    {/* TIME */}
-
-                    <div className="flex items-center gap-3 mb-4">
-                      <Clock3
-                        size={18}
-                        className="text-blue-500"
-                      />
-
-                      <span className="text-sm font-medium text-slate-600">
-                        {todo.time}
-                      </span>
-                    </div>
-
-                    {/* NOTIFICATION */}
-
-                    <div className="flex items-center gap-3 mb-5">
-                      <Bell
-                        size={18}
-                        className="text-violet-500"
-                      />
-
-                      <span className="text-sm font-medium text-slate-600">
-                        Notification{" "}
-                        {todo.notification
-                          ? "Enabled"
-                          : "Disabled"}
-                      </span>
-                    </div>
-
-                    {/* STATUS */}
-
-                    <span
-                      className={`
-                      inline-flex items-center gap-2
-                      px-4 py-2
-                      rounded-full
-                      text-xs font-semibold
-
-                      ${
-                        todo.status ===
-                        "Completed"
-                          ? "bg-emerald-100 text-emerald-600"
-                          : todo.status ===
-                            "In Progress"
-                          ? "bg-blue-100 text-blue-600"
-                          : "bg-orange-100 text-orange-600"
-                      }
-                    `}
-                    >
-                      <ListTodo size={14} />
-
-                      {todo.status}
-                    </span>
                   </div>
-                )
-              )
+                ))}
+              </div>
             ) : (
-              <div className="flex h-[450px] flex-col items-center justify-center text-center">
+              <div className="flex flex-col items-center justify-center py-20 text-center">
                 <div
                   className="
-                  mb-5 flex h-20 w-20 items-center justify-center rounded-3xl bg-slate-100
-                "
+                    mb-5
+                    flex
+                    h-20
+                    w-20
+                    items-center
+                    justify-center
+                    rounded-3xl
+                    bg-slate-100
+                  "
                 >
-                  <CalendarDays
-                    size={36}
-                    className="text-slate-400"
-                  />
+                  <CalendarDays size={32} className="text-slate-400" />
                 </div>
 
-                <h3 className="text-xl font-bold text-slate-700">
-                  No To-Do Found
+                <h3 className="text-lg font-bold text-slate-700">
+                  {search ? "No matching tasks" : "No Tasks Scheduled"}
                 </h3>
 
-                <p className="text-slate-500 mt-2">
-                  No reminders available for selected
-                  date.
+                <p className="mt-2 max-w-[260px] text-sm leading-6 text-slate-500">
+                  {search
+                    ? `No tasks match "${search}".`
+                    : "Select a highlighted date to view scheduled reminders."}
                 </p>
+
+                {!search && (
+                  <button
+                    className="
+                      mt-6
+                      flex
+                      h-11
+                      items-center
+                      gap-2
+                      rounded-xl
+                      bg-blue-600
+                      px-5
+                      text-sm
+                      font-semibold
+                      text-white
+                      transition-all
+                      hover:bg-blue-700
+                    "
+                  >
+                    <Plus size={15} />
+                    Add Reminder
+                  </button>
+                )}
               </div>
             )}
           </div>
