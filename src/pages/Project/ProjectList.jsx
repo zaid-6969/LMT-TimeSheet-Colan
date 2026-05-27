@@ -7,6 +7,13 @@ import {
   ChevronLeft,
   ChevronRight,
   CalendarDays,
+  Download,
+  Plus,
+  RefreshCcw,
+  Clock3,
+  CheckCircle2,
+  Loader2,
+  AlertCircle,
 } from "lucide-react";
 
 // ================= DUMMY DATA =================
@@ -92,7 +99,7 @@ export default function ProjectListPage() {
 
   const [currentPage, setCurrentPage] = useState(1);
 
-  const itemsPerPage = 5;
+  const [itemsPerPage, setItemsPerPage] = useState(5);
 
   // ================= FILTER =================
 
@@ -117,91 +124,251 @@ export default function ProjectListPage() {
     currentPage * itemsPerPage,
   );
 
+  // ================= COUNTS =================
+
+  const completedCount = projectData.filter(
+    (i) => i.status === "Completed",
+  ).length;
+
+  const activeCount = projectData.filter((i) => i.status === "Active").length;
+
+  const pendingCount = projectData.filter(
+    (i) => i.status === "Pending" || i.status === "Review",
+  ).length;
+
   return (
-    <div className="min-h-screen bg-[#f4f7fb] p-5">
-      {/* ================= BACKGROUND GLOW ================= */}
+    <div className="space-y-6 bg-[#F8FAFC]">
+      {/* ================= HERO ================= */}
 
-      <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-        <div className="absolute left-0 top-0 h-[400px] w-[400px] rounded-full bg-blue-200/30 blur-3xl"></div>
+      <div className="rounded-2xl border border-slate-200 bg-white p-7 shadow-sm">
+        <div className="flex flex-col gap-6 xl:flex-row xl:items-center xl:justify-between">
+          {/* LEFT */}
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-600">
+              Project Management
+            </p>
 
-        <div className="absolute bottom-0 right-0 h-[400px] w-[400px] rounded-full bg-cyan-200/30 blur-3xl"></div>
-      </div>
+            <h1 className="mt-2 text-3xl font-bold tracking-tight text-slate-900">
+              Project Workflow
+            </h1>
 
-      {/* ================= PAGE ================= */}
+            <p className="mt-3 text-sm text-slate-500">
+              Manage employee and client projects efficiently with enterprise
+              workflow tracking and monitoring.
+            </p>
+          </div>
 
-      <div className="mx-auto max-w-[1400px]">
-        {/* ================= HEADER ================= */}
+          {/* RIGHT */}
+          <div className="flex items-center gap-3">
+            <button
+              className="
+                flex h-11 items-center gap-2
+                rounded-xl border border-slate-200
+                bg-white px-5
+                text-sm font-semibold text-slate-700
+                transition-all hover:bg-slate-50
+              "
+            >
+              <Download size={17} />
+              Export
+            </button>
 
-        <div className="mb-6 rounded-[30px] border border-blue-100 bg-gradient-to-br from-white via-blue-50 to-cyan-50 p-7 shadow-sm">
-          <p className="mb-2 text-sm font-semibold uppercase tracking-[0.2em] text-blue-600">
-            Project Management
-          </p>
-
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-4xl font-black tracking-tight text-slate-900">
-                Project Workflow
-              </h1>
-
-              <p className="mt-3 max-w-2xl text-[15px] leading-7 text-slate-500">
-                Manage employee and client projects efficiently with modern
-                workflow tracking and smart monitoring.
-              </p>
-            </div>
-
-            <div className="hidden xl:flex h-16 w-16 items-center justify-center rounded-3xl bg-gradient-to-br from-blue-600 to-cyan-500 text-white shadow-xl shadow-blue-200">
-              <FolderKanban size={30} />
-            </div>
+            <button
+              className="
+                flex h-11 items-center gap-2
+                rounded-xl bg-blue-600
+                px-5
+                text-sm font-semibold text-white
+                transition-all hover:bg-blue-700
+              "
+            >
+              <Plus size={17} />
+              Add Project
+            </button>
           </div>
         </div>
 
-        {/* ================= FILTER SECTION ================= */}
+        {/* ================= STATS ================= */}
 
-        <div className="mb-6 rounded-[28px] border border-white/60 bg-white/80 p-5 shadow-lg backdrop-blur-xl">
-          <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
-            {/* TAGS */}
+        <div className="mt-7 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {/* TOTAL */}
+          <div className="rounded-2xl border border-slate-200 bg-white p-5">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">
+                  TOTAL PROJECTS
+                </p>
 
-            <div className="flex items-center gap-3">
-              <p className="text-sm font-medium text-slate-500">Status</p>
+                <h2 className="mt-3 text-3xl font-bold text-slate-900">
+                  {projectData.length}
+                </h2>
 
-              <select
-                value={activeTag}
-                onChange={(e) => {
-                  setActiveTag(e.target.value);
-                  setCurrentPage(1);
-                }}
-                className="
-      h-11
-      rounded-2xl
-      border border-slate-200
-      bg-white
-      px-4
-      text-sm font-semibold
-      text-slate-700
-      shadow-sm
-      outline-none
-      transition-all
-      focus:border-blue-400
-      focus:ring-4
-      focus:ring-blue-100
-    "
-              >
-                <option value="All">All</option>
+                <p className="mt-2 text-xs text-slate-500">
+                  Active project records
+                </p>
+              </div>
 
-                <option value="Active">Active</option>
-
-                <option value="Completed">Completed</option>
-
-                <option value="Pending">Pending</option>
-
-                <option value="Review">Review</option>
-              </select>
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50">
+                <FolderKanban size={18} className="text-blue-600" />
+              </div>
             </div>
+          </div>
 
+          {/* COMPLETED */}
+          <div className="rounded-2xl border border-slate-200 bg-white p-5">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">
+                  COMPLETED
+                </p>
+
+                <h2 className="mt-3 text-3xl font-bold text-slate-900">
+                  {completedCount}
+                </h2>
+
+                <p className="mt-2 text-xs text-slate-500">
+                  Completed projects
+                </p>
+              </div>
+
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-50">
+                <CheckCircle2 size={18} className="text-emerald-600" />
+              </div>
+            </div>
+          </div>
+
+          {/* ACTIVE */}
+          <div className="rounded-2xl border border-slate-200 bg-white p-5">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">
+                  ACTIVE
+                </p>
+
+                <h2 className="mt-3 text-3xl font-bold text-slate-900">
+                  {activeCount}
+                </h2>
+
+                <p className="mt-2 text-xs text-slate-500">Ongoing projects</p>
+              </div>
+
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50">
+                <Loader2 size={18} className="text-blue-600" />
+              </div>
+            </div>
+          </div>
+
+          {/* PENDING */}
+          <div className="rounded-2xl border border-slate-200 bg-white p-5">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">
+                  PENDING
+                </p>
+
+                <h2 className="mt-3 text-3xl font-bold text-slate-900">
+                  {pendingCount}
+                </h2>
+
+                <p className="mt-2 text-xs text-slate-500">
+                  Pending review projects
+                </p>
+              </div>
+
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-50">
+                <AlertCircle size={18} className="text-amber-600" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ================= FILTER TOOLBAR ================= */}
+
+      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div
+          className="
+            flex flex-col gap-3
+            border-b border-slate-200
+            bg-white px-5 py-4
+            xl:flex-row xl:items-center xl:justify-between
+          "
+        >
+          {/* LEFT */}
+          <div className="flex flex-wrap items-center gap-3">
+            {/* STATUS */}
+            <select
+              value={activeTag}
+              onChange={(e) => {
+                setActiveTag(e.target.value);
+
+                setCurrentPage(1);
+              }}
+              className="
+                h-10 rounded-xl
+                border border-slate-200
+                bg-white px-4
+                text-sm font-medium text-slate-700
+                outline-none
+              "
+            >
+              <option value="All">All Status</option>
+
+              <option value="Active">Active</option>
+
+              <option value="Completed">Completed</option>
+
+              <option value="Pending">Pending</option>
+
+              <option value="Review">Review</option>
+            </select>
+
+            {/* DATE */}
+            <button
+              className="
+                flex h-10 items-center gap-2
+                rounded-xl border border-slate-200
+                bg-white px-4
+                text-sm font-medium text-slate-700
+              "
+            >
+              <CalendarDays size={15} />
+              May 2026
+            </button>
+
+            {/* RESET */}
+            <button
+              onClick={() => {
+                setActiveTag("All");
+
+                setSearch("");
+
+                setCurrentPage(1);
+              }}
+              className="
+                flex h-10 items-center gap-2
+                rounded-xl border border-slate-200
+                bg-white px-4
+                text-sm font-medium text-slate-600
+                transition-all hover:bg-slate-50
+              "
+            >
+              <RefreshCcw size={14} />
+              Reset
+            </button>
+          </div>
+
+          {/* RIGHT */}
+          <div className="flex items-center gap-3">
             {/* SEARCH */}
-
-            <div className="flex h-[46px] w-full xl:w-[320px] items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 shadow-sm transition-all focus-within:border-blue-400 focus-within:shadow-md">
-              <Search size={18} className="text-slate-400" />
+            <div
+              className="
+                flex h-10 items-center gap-2
+                rounded-xl border border-slate-200
+                bg-white px-4
+              "
+            >
+              <Search size={15} className="text-slate-400" />
 
               <input
                 type="text"
@@ -212,369 +379,283 @@ export default function ProjectListPage() {
 
                   setCurrentPage(1);
                 }}
-                className="w-full bg-transparent text-sm outline-none placeholder:text-slate-400"
+                className="
+                  bg-transparent text-sm
+                  text-slate-700 outline-none
+                  placeholder:text-slate-400
+                "
               />
+            </div>
+
+            {/* SHOW */}
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-slate-500">Show</span>
+
+              <select
+                value={itemsPerPage}
+                onChange={(e) => {
+                  setItemsPerPage(Number(e.target.value));
+
+                  setCurrentPage(1);
+                }}
+                className="
+                  h-10 rounded-xl
+                  border border-slate-200
+                  bg-white px-3
+                  text-sm font-medium text-slate-700
+                  outline-none
+                "
+              >
+                <option value={5}>5</option>
+
+                <option value={10}>10</option>
+
+                <option value={15}>15</option>
+              </select>
             </div>
           </div>
         </div>
 
-        {/* ================= TABLE CONTAINER ================= */}
+        {/* ================= TABLE HEADER ================= */}
 
         <div
           className="
-            overflow-hidden
-            rounded-[28px]
-            border border-slate-200
-            bg-white
-            shadow-[0_8px_30px_rgb(0,0,0,0.04)]
+            hidden lg:grid
+            grid-cols-[1.5fr_1fr_1.5fr_1fr_1fr_1fr_80px]
+            gap-4
+            border-b border-slate-200
+            bg-slate-50
+            px-6 py-4
           "
         >
-          {/* ================= TABLE HEADER ================= */}
-
-          <div
-            className="
-              flex flex-col gap-4
-              border-b border-slate-100
-              px-6 py-5
-              lg:flex-row lg:items-center lg:justify-between
-            "
-          >
-            {/* LEFT */}
-
-            <div className="flex items-center gap-4">
-              <div
-                className="
-                  flex h-14 w-14
-                  items-center justify-center
-                  rounded-3xl
-                  bg-blue-50
-                "
-              >
-                <FolderKanban size={28} className="text-blue-600" />
-              </div>
-
-              <div>
-                <h2 className="text-2xl font-black text-slate-900">
-                  Employee Tasks
-                </h2>
-
-                <p className="mt-1 text-sm text-slate-500">
-                  Total{" "}
-                  <span className="font-bold text-slate-700">
-                    {filteredProjects.length}
-                  </span>{" "}
-                  records
-                </p>
-              </div>
-            </div>
-
-            {/* RIGHT */}
-
-            <div className="flex flex-wrap items-center gap-3">
-              <button
-                className="
-                  flex h-11 items-center gap-2
-                  rounded-2xl border border-slate-200
-                  bg-white px-4
-                  text-sm font-semibold text-slate-700
-                  shadow-sm
-                "
-              >
-                Today
-              </button>
-
-              <button
-                className="
-                  flex h-11 items-center gap-2
-                  rounded-2xl border border-slate-200
-                  bg-white px-4
-                  text-sm font-semibold text-slate-700
-                  shadow-sm
-                "
-              >
-                <CalendarDays size={16} />
-                May 22, 2026
-              </button>
-            </div>
-          </div>
-
-          {/* ================= TABLE ================= */}
-
-          <div className="overflow-auto">
-            {/* TABLE HEADING */}
-
+          {[
+            "PROJECT",
+            "EMPLOYEE",
+            "TASK",
+            "PRIORITY",
+            "STATUS",
+            "DATE",
+            "ACTION",
+          ].map((head) => (
             <div
+              key={head}
               className="
-                hidden
-                grid-cols-[1.5fr_1fr_1.5fr_1fr_1fr_1fr_80px]
-                gap-4
-                border-b border-slate-100
-                bg-slate-50
-                px-6 py-4
-                lg:grid
+                text-[11px]
+                font-semibold
+                uppercase
+                tracking-[0.14em]
+                text-slate-400
               "
             >
-              {[
-                "PROJECT",
-                "EMPLOYEE",
-                "TASK",
-                "PRIORITY",
-                "STATUS",
-                "DATE",
-                "ACTION",
-              ].map((head) => (
-                <div
-                  key={head}
-                  className="
-                    text-[11px]
-                    font-bold
-                    tracking-[0.15em]
-                    text-slate-400
-                  "
-                >
-                  {head}
-                </div>
-              ))}
+              {head}
             </div>
+          ))}
+        </div>
 
-            {/* TABLE BODY */}
+        {/* ================= TABLE BODY ================= */}
 
-            <div className="divide-y divide-slate-100">
-              {paginatedProjects.map((project) => (
+        <div className="divide-y divide-slate-100">
+          {paginatedProjects.map((project) => (
+            <div
+              key={project.id}
+              className="
+                  grid grid-cols-1
+                  gap-5 px-6 py-5
+                  transition-all
+                  hover:bg-blue-50/20
+                  lg:grid-cols-[1.5fr_1fr_1.5fr_1fr_1fr_1fr_80px]
+                "
+            >
+              {/* PROJECT */}
+              <div className="flex items-center gap-3">
                 <div
-                  key={project.id}
                   className="
-                      grid
-                      grid-cols-1
-                      gap-4
-                      px-6 py-5
-                      transition-all duration-300
-                      hover:bg-blue-50/40
-                      lg:grid-cols-[1.5fr_1fr_1.5fr_1fr_1fr_1fr_80px]
+                      flex h-11 w-11 items-center
+                      justify-center rounded-xl
+                      bg-blue-50
                     "
                 >
-                  {/* PROJECT */}
-
-                  <div className="flex items-center gap-3">
-                    <div
-                      className="
-                          flex h-11 w-11
-                          items-center justify-center
-                          rounded-2xl
-                          bg-blue-50
-                        "
-                    >
-                      <FolderKanban size={20} className="text-blue-600" />
-                    </div>
-
-                    <div>
-                      <h3 className="font-bold text-slate-800">
-                        {project.name}
-                      </h3>
-
-                      <p className="text-sm text-slate-400">{project.client}</p>
-                    </div>
-                  </div>
-
-                  {/* EMPLOYEE */}
-
-                  <div className="flex items-center gap-3">
-                    <div
-                      className="
-                          flex h-10 w-10
-                          items-center justify-center
-                          rounded-xl
-                          bg-slate-100
-                          text-sm font-bold text-slate-700
-                        "
-                    >
-                      {project.employeeShort}
-                    </div>
-
-                    <p className="font-medium text-slate-700">
-                      {project.employee}
-                    </p>
-                  </div>
-
-                  {/* TASK */}
-
-                  <div>
-                    <h3 className="font-medium leading-7 text-slate-700">
-                      {project.task}
-                    </h3>
-                  </div>
-
-                  {/* PRIORITY */}
-
-                  <div className="flex items-center">
-                    <span
-                      className={`
-                          inline-flex items-center
-                          rounded-full
-                          px-4 py-1.5
-                          text-xs font-bold
-
-                          ${
-                            project.priority === "High"
-                              ? "bg-red-50 text-red-600"
-                              : project.priority === "Medium"
-                                ? "bg-orange-50 text-orange-600"
-                                : "bg-emerald-50 text-emerald-600"
-                          }
-                        `}
-                    >
-                      {project.priority}
-                    </span>
-                  </div>
-
-                  {/* STATUS */}
-
-                  <div className="flex items-center">
-                    <span
-                      className={`
-                          inline-flex items-center
-                          rounded-full
-                          px-4 py-1.5
-                          text-xs font-bold
-
-                          ${
-                            project.status === "Completed"
-                              ? "bg-emerald-50 text-emerald-600"
-                              : project.status === "Active"
-                                ? "bg-blue-50 text-blue-600"
-                                : project.status === "Review"
-                                  ? "bg-violet-50 text-violet-600"
-                                  : "bg-orange-50 text-orange-600"
-                          }
-                        `}
-                    >
-                      {project.status}
-                    </span>
-                  </div>
-
-                  {/* DATE */}
-
-                  <div>
-                    <h3 className="font-bold text-slate-800">Week 1</h3>
-
-                    <p className="text-sm text-slate-400">{project.deadline}</p>
-                  </div>
-
-                  {/* ACTION */}
-
-                  <div className="flex items-center">
-                    <button
-                      className="
-                          flex h-11 w-11
-                          items-center justify-center
-                          rounded-2xl
-                          border border-slate-200
-                          bg-white
-                          text-slate-500
-                          shadow-sm
-                          transition-all duration-300
-                          hover:bg-blue-600
-                          hover:text-white
-                        "
-                    >
-                      <Eye size={18} />
-                    </button>
-                  </div>
+                  <FolderKanban size={20} className="text-blue-600" />
                 </div>
-              ))}
-            </div>
-          </div>
 
-          {/* ================= PAGINATION ================= */}
+                <div>
+                  <h3 className="font-semibold text-slate-800">
+                    {project.name}
+                  </h3>
 
-          <div
-            className="
-              flex items-center justify-between
-              border-t border-slate-100
-              px-6 py-5
-            "
-          >
-            {/* LEFT */}
+                  <p className="text-sm text-slate-400">{project.client}</p>
+                </div>
+              </div>
 
-            <p className="text-sm text-slate-500">
-              Showing{" "}
-              <span className="font-bold text-slate-700">
-                {paginatedProjects.length}
-              </span>{" "}
-              records
-            </p>
+              {/* EMPLOYEE */}
+              <div className="flex items-center gap-3">
+                <div
+                  className="
+                      flex h-10 w-10 items-center
+                      justify-center rounded-xl
+                      bg-slate-100 text-sm
+                      font-bold text-slate-700
+                    "
+                >
+                  {project.employeeShort}
+                </div>
 
-            {/* RIGHT */}
+                <p className="font-medium text-slate-700">{project.employee}</p>
+              </div>
 
-            <div className="flex items-center gap-2">
-              {/* PREV */}
+              {/* TASK */}
+              <div>
+                <h3 className="text-sm leading-6 font-medium text-slate-700">
+                  {project.task}
+                </h3>
+              </div>
 
-              <button
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage((prev) => prev - 1)}
-                className={`
-                  flex h-11 w-11
-                  items-center justify-center
-                  rounded-2xl
-                  border transition-all
-
-                  ${
-                    currentPage === 1
-                      ? "cursor-not-allowed border-slate-200 bg-slate-50 text-slate-300"
-                      : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
-                  }
-                `}
-              >
-                <ChevronLeft size={18} />
-              </button>
-
-              {/* PAGES */}
-
-              {Array.from({
-                length: totalPages,
-              }).map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentPage(index + 1)}
+              {/* PRIORITY */}
+              <div className="flex items-center">
+                <span
                   className={`
-                    flex h-11 w-11
-                    items-center justify-center
-                    rounded-2xl
-                    text-sm font-bold
-                    transition-all duration-300
+                      inline-flex items-center
+                      rounded-full px-4 py-1.5
+                      text-xs font-semibold
+
+                      ${
+                        project.priority === "High"
+                          ? "bg-red-50 text-red-600"
+                          : project.priority === "Medium"
+                            ? "bg-amber-50 text-amber-600"
+                            : "bg-emerald-50 text-emerald-600"
+                      }
+                    `}
+                >
+                  {project.priority}
+                </span>
+              </div>
+
+              {/* STATUS */}
+              <div className="flex items-center">
+                <span
+                  className={`
+                      inline-flex items-center
+                      rounded-full px-4 py-1.5
+                      text-xs font-semibold
+
+                      ${
+                        project.status === "Completed"
+                          ? "bg-emerald-50 text-emerald-600"
+                          : project.status === "Active"
+                            ? "bg-blue-50 text-blue-600"
+                            : project.status === "Review"
+                              ? "bg-violet-50 text-violet-600"
+                              : "bg-amber-50 text-amber-600"
+                      }
+                    `}
+                >
+                  {project.status}
+                </span>
+              </div>
+
+              {/* DATE */}
+              <div>
+                <h3 className="font-semibold text-slate-800">Week 1</h3>
+
+                <p className="text-sm text-slate-400">{project.deadline}</p>
+              </div>
+
+              {/* ACTION */}
+              <div className="flex items-center">
+                <button
+                  className="
+                      flex h-10 w-10 items-center
+                      justify-center rounded-xl
+                      border border-slate-200
+                      bg-white text-slate-500
+                      transition-all hover:bg-blue-600
+                      hover:text-white
+                    "
+                >
+                  <Eye size={17} />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* ================= PAGINATION ================= */}
+
+        <div
+          className="
+            flex items-center justify-between
+            border-t border-slate-200
+            bg-white px-6 py-5
+          "
+        >
+          <p className="text-sm text-slate-500">
+            Showing{" "}
+            <span className="font-semibold text-slate-700">
+              {paginatedProjects.length}
+            </span>{" "}
+            records
+          </p>
+
+          <div className="flex items-center gap-2">
+            {/* PREV */}
+            <button
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage((prev) => prev - 1)}
+              className={`
+                flex h-10 w-10 items-center
+                justify-center rounded-xl border
+
+                ${
+                  currentPage === 1
+                    ? "cursor-not-allowed border-slate-200 bg-slate-50 text-slate-300"
+                    : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+                }
+              `}
+            >
+              <ChevronLeft size={17} />
+            </button>
+
+            {/* PAGES */}
+            {Array.from({
+              length: totalPages,
+            }).map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentPage(index + 1)}
+                className={`
+                    flex h-10 w-10 items-center
+                    justify-center rounded-xl
+                    text-sm font-semibold transition-all
 
                     ${
                       currentPage === index + 1
-                        ? "bg-gradient-to-r from-blue-600 to-cyan-500 text-white shadow-lg shadow-blue-200"
-                        : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
+                        ? "bg-blue-600 text-white"
+                        : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
                     }
                   `}
-                >
-                  {index + 1}
-                </button>
-              ))}
-
-              {/* NEXT */}
-
-              <button
-                disabled={currentPage === totalPages}
-                onClick={() => setCurrentPage((prev) => prev + 1)}
-                className={`
-                  flex h-11 w-11
-                  items-center justify-center
-                  rounded-2xl
-                  border transition-all
-
-                  ${
-                    currentPage === totalPages
-                      ? "cursor-not-allowed border-slate-200 bg-slate-50 text-slate-300"
-                      : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
-                  }
-                `}
               >
-                <ChevronRight size={18} />
+                {index + 1}
               </button>
-            </div>
+            ))}
+
+            {/* NEXT */}
+            <button
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage((prev) => prev + 1)}
+              className={`
+                flex h-10 w-10 items-center
+                justify-center rounded-xl border
+
+                ${
+                  currentPage === totalPages
+                    ? "cursor-not-allowed border-slate-200 bg-slate-50 text-slate-300"
+                    : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+                }
+              `}
+            >
+              <ChevronRight size={17} />
+            </button>
           </div>
         </div>
       </div>
