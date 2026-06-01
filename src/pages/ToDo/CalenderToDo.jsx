@@ -24,7 +24,7 @@ import {
 /* ───────────────────────────────────────────── */
 
 const todoEvents = {
-  "2026-05-05": [
+  "2026-06-05": [
     {
       title: "Client Meeting",
       description: "Discuss ERP dashboard improvements with client.",
@@ -42,7 +42,7 @@ const todoEvents = {
     },
   ],
 
-  "2026-05-12": [
+  "2026-06-12": [
     {
       title: "Bug Fixing",
       description: "Fix sidebar collapse animation issues.",
@@ -52,7 +52,7 @@ const todoEvents = {
     },
   ],
 
-  "2026-05-21": [
+  "2026-06-21": [
     {
       title: "Testing",
       description: "Test To-Do calendar responsiveness.",

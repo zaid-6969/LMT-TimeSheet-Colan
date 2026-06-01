@@ -22,7 +22,7 @@ import {
 /* ───────────────────────────────────────────── */
 
 const taskEvents = {
-  "2026-05-05": [
+  "2026-06-05": [
     {
       project: "ERP Dashboard",
       employee: "John Doe",
@@ -40,7 +40,7 @@ const taskEvents = {
     },
   ],
 
-  "2026-05-21": [
+  "2026-06-21": [
     {
       project: "Inventory System",
       employee: "Emma",
