@@ -58,10 +58,10 @@ const sidebarItems = [
         name: "To Do Calendar List",
         path: "/todolist/todocalender",
       },
-      {
-        name: "Add To Do",
-        path: "/todolist/addtodo",
-      },
+      // {
+      //   name: "Add To Do",
+      //   path: "/todolist/addtodo",
+      // },
     ],
   },
 
@@ -98,10 +98,10 @@ const sidebarItems = [
         name: "View Timesheet",
         path: "/timesheet/view",
       },
-      {
-        name: "Timesheet Approval",
-        path: "/timesheet/approval",
-      },
+      // {
+      //   name: "Timesheet Approval",
+      //   path: "/timesheet/approval",
+      // },
     ],
   },
 
@@ -126,10 +126,10 @@ const sidebarItems = [
         name: "Final Source List",
         path: "/final-source/list",
       },
-      {
-        name: "Add Final Source",
-        path: "/final-source/add",
-      },
+      // {
+      //   name: "Add Final Source",
+      //   path: "/final-source/add",
+      // },
     ],
   },
 ];
@@ -383,7 +383,13 @@ export default function Sidebar() {
                 return (
                   <div key={item.title}>
                     <button
-                      onClick={() => toggleMenu(item.title)}
+                      onClick={() => {
+                        if (item.children.length === 1) {
+                          navigate(item.children[0].path);
+                        } else {
+                          toggleMenu(item.title);
+                        }
+                      }}
                       className="
                         w-full
                         rounded
@@ -458,8 +464,8 @@ export default function Sidebar() {
                         )}
                       </div>
 
-                      {/* CHEVRON */}
-                      {showLabels && (
+                      {/* CHEVRON — only show for items with more than 1 child */}
+                      {showLabels && item.children.length > 1 && (
                         <ChevronDown
                           size={15}
                           style={{
@@ -476,7 +482,7 @@ export default function Sidebar() {
                     </button>
 
                     {/* SUB MENU */}
-                    {showLabels && isOpen && (
+                    {showLabels && isOpen && item.children.length > 1 && (
                       <div
                         style={{
                           marginLeft: "30px",
