@@ -34,6 +34,9 @@ import CalenderToDo from "../pages/ToDo/CalenderToDo";
 import ListToDo from "../pages/ToDo/ListToDo"
 import DashboardPage from "../pages/DashBoard";
 
+// employee management 
+
+import EmployeeProfilePage from "../pages/EmployeeProfilePage"
 export default function AppRoutes() {
   return (
     <Routes>
@@ -74,6 +77,9 @@ export default function AppRoutes() {
 
         {/* QA */}
         <Route path="/qa/list" element={<QAList />} />
+
+         {/* Employee Management */}
+        <Route path="/employee" element={<EmployeeProfilePage />} />
 
         {/* To Do */}
         <Route path="/todolist/todolist" element={<ListToDo />} />

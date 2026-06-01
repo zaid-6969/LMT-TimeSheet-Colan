@@ -16,7 +16,7 @@ import {
   LogOut,
 } from "lucide-react";
 
-import { useLocation, NavLink } from "react-router-dom";
+import { useLocation, NavLink, useNavigate } from "react-router-dom";
 
 import { useState, useEffect, useRef } from "react";
 
@@ -134,6 +134,7 @@ const sidebarItems = [
   },
 ];
 
+
 function useIsTablet() {
   const [isTablet, setIsTablet] = useState(false);
 
@@ -230,6 +231,8 @@ export default function Sidebar() {
   const isCollapsed = isTablet && !mobileOpen;
 
   const showLabels = !isCollapsed;
+
+  const navigate = useNavigate();
 
   return (
     <>
@@ -690,6 +693,7 @@ export default function Sidebar() {
 
               {/* PROFILE */}
               <button
+                onClick={() => navigate("/employee")}
                 className="
                   w-full
                   flex
@@ -728,6 +732,7 @@ export default function Sidebar() {
 
               {/* LOGOUT */}
               <button
+                onClick={() => navigate("/")}
                 className="
                   w-full
                   flex
@@ -781,18 +786,18 @@ export default function Sidebar() {
                   font-semibold
                 "
               >
-                AS
+                MZ
               </div>
 
               {/* INFO */}
               {showLabels && (
                 <div className="text-left">
                   <p className="text-sm font-semibold text-slate-800">
-                    Arjun Sharma
+                    Mohammed Zaid
                   </p>
 
                   <p className="text-xs text-slate-500 mt-1">
-                    arjun.sharma@gmail.com
+                    zaid@gmail.com
                   </p>
                 </div>
               )}
