@@ -1,5 +1,4 @@
-import { useMemo, useState } from "react";
-
+import { useMemo, useState, useRef, useEffect } from "react";
 import {
   Search,
   CalendarDays,
@@ -16,11 +15,17 @@ import {
   CheckCircle2,
   AlertCircle,
   RefreshCcw,
+  MoreVertical,
+  X,
+  Save,
+  AlertTriangle,
+  BadgeCheck,
+  Clock,
 } from "lucide-react";
 
-// ================= DUMMY DATA =================
+/* ─────────────────── INITIAL DATA ─────────────────── */
 
-const timesheetData = [
+const INITIAL_DATA = [
   {
     id: 1,
     date: "20/05/2026",
@@ -33,7 +38,6 @@ const timesheetData = [
     status: "Non Billable",
     type: "Fixed Price",
   },
-
   {
     id: 2,
     date: "19/05/2026",
@@ -46,7 +50,6 @@ const timesheetData = [
     status: "Billable",
     type: "Time & Material",
   },
-
   {
     id: 3,
     date: "18/05/2026",
@@ -59,7 +62,6 @@ const timesheetData = [
     status: "Billable",
     type: "Retainer",
   },
-
   {
     id: 4,
     date: "17/05/2026",
@@ -72,7 +74,6 @@ const timesheetData = [
     status: "Non Billable",
     type: "Fixed Price",
   },
-
   {
     id: 5,
     date: "16/05/2026",
@@ -85,7 +86,6 @@ const timesheetData = [
     status: "Billable",
     type: "Time & Material",
   },
-
   {
     id: 6,
     date: "15/05/2026",
@@ -100,634 +100,721 @@ const timesheetData = [
   },
 ];
 
-export default function ModernTimesheetPage() {
-  const [projectFilter, setProjectFilter] = useState("All");
+const PROJECTS  = ["ERP Dashboard", "CRM System", "HRMS Portal", "Inventory System", "Analytics Dashboard", "Support System"];
+const MODULES   = ["Frontend", "Backend", "Testing", "Research", "Support", "DevOps", "Design"];
+const TYPES     = ["Fixed Price", "Time & Material", "Retainer"];
 
-  const [typeFilter, setTypeFilter] = useState("All");
+const EMPTY_FORM = {
+  date: "", project: "", module: "", task: "",
+  start: "", end: "", hours: "", status: "", type: "",
+};
 
-  const [search, setSearch] = useState("");
+/* ─────────────────── STATUS BADGE ─────────────────── */
 
-  const [currentPage, setCurrentPage] = useState(1);
-
-  const [itemsPerPage, setItemsPerPage] = useState(5);
-
-  // ================= FILTER =================
-
-  const filteredData = useMemo(() => {
-    return timesheetData.filter((item) => {
-      const matchProject =
-        projectFilter === "All" ? true : item.project === projectFilter;
-
-      const matchType =
-        typeFilter === "All" ? true : item.status === typeFilter;
-
-      const matchSearch =
-        item.task.toLowerCase().includes(search.toLowerCase()) ||
-        item.project.toLowerCase().includes(search.toLowerCase());
-
-      return matchProject && matchType && matchSearch;
-    });
-  }, [projectFilter, typeFilter, search]);
-
-  // ================= PAGINATION =================
-
-  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-
-  const paginatedData = filteredData.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage,
+function StatusBadge({ s }) {
+  const cls =
+    s === "Billable"
+      ? "bg-emerald-50 text-emerald-700"
+      : "bg-amber-50 text-amber-700";
+  const Icon = s === "Billable" ? BadgeCheck : Clock;
+  return (
+    <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ${cls}`}>
+      <Icon size={11} />
+      {s}
+    </span>
   );
+}
 
-  // ================= COUNTS =================
+/* ─────────────────── ACTION MENU ─────────────────── */
 
-  const billableHours = timesheetData.filter(
-    (i) => i.status === "Billable",
-  ).length;
+function ActionMenu({ item, onView, onEdit, onDelete }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
 
-  const nonBillableHours = timesheetData.filter(
-    (i) => i.status === "Non Billable",
-  ).length;
-
-  const totalProjects = new Set(timesheetData.map((i) => i.project)).size;
+  useEffect(() => {
+    const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
 
   return (
-    <div className="space-y-6">
-      {/* ================= HERO ================= */}
+    <div className="relative" ref={ref}>
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 transition-all hover:bg-slate-50"
+      >
+        <MoreVertical size={15} />
+      </button>
+      {open && (
+        <div className="absolute right-0 top-11 z-50 min-w-[160px] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl">
+          <button onClick={() => { onView(item); setOpen(false); }}
+            className="flex w-full items-center gap-2 px-4 py-3 text-sm text-slate-600 hover:bg-slate-50">
+            <Eye size={14} /> View Details
+          </button>
+          <button onClick={() => { onEdit(item); setOpen(false); }}
+            className="flex w-full items-center gap-2 px-4 py-3 text-sm text-slate-600 hover:bg-slate-50">
+            <Pencil size={14} /> Edit Entry
+          </button>
+          <button className="flex w-full items-center gap-2 px-4 py-3 text-sm text-slate-600 hover:bg-slate-50">
+            <Download size={14} /> Export
+          </button>
+          <div className="border-t border-slate-100" />
+          <button onClick={() => { onDelete(item); setOpen(false); }}
+            className="flex w-full items-center gap-2 px-4 py-3 text-sm text-red-600 hover:bg-red-50">
+            <Trash2 size={14} /> Delete
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-7 shadow-sm">
-        <div className="flex flex-col gap-6 xl:flex-row xl:items-center xl:justify-between">
-          {/* LEFT */}
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-600">
-              Employee Management
-            </p>
+/* ─────────────────── VIEW MODAL ─────────────────── */
 
-            <h1 className="mt-2 text-3xl font-bold tracking-tight text-slate-900">
-              Timesheet Dashboard
-            </h1>
-
-            <p className="mt-3 text-sm text-slate-500">
-              Monitor employee working hours, billable tasks and project
-              workflow with enterprise level dashboard experience.
-            </p>
-          </div>
-
-          {/* RIGHT */}
-          <div className="flex items-center gap-3">
-            <button
-              className="
-                flex h-11 items-center gap-2
-                rounded-xl border border-slate-200
-                bg-white px-5
-                text-sm font-semibold text-slate-700
-                transition-all hover:bg-slate-50
-              "
-            >
-              <Download size={17} />
-              Export
-            </button>
-
-            <button
-              className="
-                flex h-11 items-center gap-2
-                rounded-xl bg-blue-600
-                px-5
-                text-sm font-semibold text-white
-                transition-all hover:bg-blue-700
-              "
-            >
-              <Plus size={17} />
-              Add Timesheet
+function ViewModal({ item, onClose }) {
+  if (!item) return null;
+  return (
+    <div onClick={onClose} className="fixed inset-0 z-[999] flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-[3px]">
+      <div onClick={(e) => e.stopPropagation()} className="w-full max-w-xl overflow-hidden rounded-[28px] bg-white shadow-2xl">
+        {/* Header */}
+        <div className="border-b border-slate-200 bg-slate-50/70 px-7 py-6">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">{item.project}</span>
+                <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">{item.module}</span>
+                <StatusBadge s={item.status} />
+              </div>
+              <h2 className="mt-4 text-xl font-bold text-slate-900">{item.task}</h2>
+              <p className="mt-1 text-sm text-slate-500">{item.type}</p>
+            </div>
+            <button onClick={onClose} className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 hover:bg-slate-50">
+              <X size={16} />
             </button>
           </div>
         </div>
-
-        {/* ================= STATS ================= */}
-
-        <div className="mt-7 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {/* BILLABLE */}
-          <div className="rounded-2xl border border-slate-200 bg-white p-5">
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">
-                  BILLABLE
-                </p>
-
-                <h2 className="mt-3 text-3xl font-bold text-slate-900">
-                  {billableHours}
-                </h2>
-
-                <p className="mt-2 text-xs text-slate-500">Billable entries</p>
+        {/* Body */}
+        <div className="space-y-4 p-7">
+          {/* Date + Hours */}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="rounded-2xl border border-slate-200 bg-slate-50/50 p-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">Date</p>
+              <div className="mt-2 flex items-center gap-2">
+                <CalendarDays size={15} className="text-blue-600" />
+                <span className="font-semibold text-slate-800">{item.date}</span>
               </div>
-
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-50">
-                <CheckCircle2 size={18} className="text-emerald-600" />
+            </div>
+            <div className="rounded-2xl border border-slate-200 bg-slate-50/50 p-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">Total Hours</p>
+              <div className="mt-2 flex items-center gap-2">
+                <Clock3 size={15} className="text-blue-600" />
+                <span className="font-semibold text-slate-800">{item.hours}</span>
               </div>
             </div>
           </div>
-
-          {/* NON BILLABLE */}
-          <div className="rounded-2xl border border-slate-200 bg-white p-5">
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">
-                  NON BILLABLE
-                </p>
-
-                <h2 className="mt-3 text-3xl font-bold text-slate-900">
-                  {nonBillableHours}
-                </h2>
-
-                <p className="mt-2 text-xs text-slate-500">
-                  Non billable entries
-                </p>
-              </div>
-
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-50">
-                <AlertCircle size={18} className="text-amber-600" />
-              </div>
+          {/* Start + End */}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="rounded-2xl border border-slate-200 p-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">Start Time</p>
+              <p className="mt-2 font-semibold text-slate-800">{item.start}</p>
+            </div>
+            <div className="rounded-2xl border border-slate-200 p-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">End Time</p>
+              <p className="mt-2 font-semibold text-slate-800">{item.end}</p>
             </div>
           </div>
-
-          {/* PROJECTS */}
-          <div className="rounded-2xl border border-slate-200 bg-white p-5">
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">
-                  PROJECTS
-                </p>
-
-                <h2 className="mt-3 text-3xl font-bold text-slate-900">
-                  {totalProjects}
-                </h2>
-
-                <p className="mt-2 text-xs text-slate-500">Active projects</p>
-              </div>
-
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50">
-                <FolderKanban size={18} className="text-blue-600" />
-              </div>
-            </div>
+          {/* Footer */}
+          <div className="flex justify-end gap-3">
+            <button onClick={onClose} className="h-11 rounded-xl border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-600 hover:bg-slate-50">
+              Close
+            </button>
+            <button className="flex h-11 items-center gap-2 rounded-xl bg-blue-600 px-5 text-sm font-semibold text-white hover:bg-blue-700">
+              <Download size={15} /> Export
+            </button>
           </div>
         </div>
       </div>
+    </div>
+  );
+}
 
-      {/* ================= FILTER TOOLBAR ================= */}
+/* ─────────────────── FORM MODAL ─────────────────── */
 
-      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-        <div
-          className="
-            flex flex-col gap-3
-            border-b border-slate-200
-            bg-white px-5 py-4
-            xl:flex-row xl:items-center xl:justify-between
-          "
-        >
+function TimesheetFormModal({ mode, initialData, onSave, onClose }) {
+  const [form, setForm]     = useState(initialData || EMPTY_FORM);
+  const [errors, setErrors] = useState({});
+
+  const set = (key, val) => {
+    setForm((f) => ({ ...f, [key]: val }));
+    setErrors((e) => ({ ...e, [key]: "" }));
+  };
+
+  const validate = () => {
+    const e = {};
+    if (!form.date.trim())    e.date    = "Date is required.";
+    if (!form.project)        e.project = "Select a project.";
+    if (!form.module)         e.module  = "Select a module.";
+    if (!form.task.trim())    e.task    = "Task description is required.";
+    if (!form.start.trim())   e.start   = "Start time is required.";
+    if (!form.end.trim())     e.end     = "End time is required.";
+    if (!form.hours.trim())   e.hours   = "Hours is required.";
+    if (!form.status)         e.status  = "Select status.";
+    if (!form.type)           e.type    = "Select billing type.";
+    setErrors(e);
+    return Object.keys(e).length === 0;
+  };
+
+  const isEdit = mode === "edit";
+
+  return (
+    <div className="fixed inset-0 z-[999] flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-sm">
+      <div className="w-full max-w-xl overflow-hidden rounded-[24px] bg-white shadow-2xl">
+        {/* Header */}
+        <div className="flex items-center justify-between border-b border-slate-200 px-6 py-5">
+          <div>
+            <h2 className="text-lg font-bold text-slate-900">{isEdit ? "Edit Timesheet Entry" : "Add Timesheet Entry"}</h2>
+            <p className="mt-0.5 text-sm text-slate-500">{isEdit ? "Update the entry details below." : "Fill in all required fields."}</p>
+          </div>
+          <button onClick={onClose} className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 text-slate-400 hover:bg-slate-50">
+            <X size={16} />
+          </button>
+        </div>
+
+        {/* Body */}
+        <div className="max-h-[70vh] overflow-y-auto px-6 py-5 space-y-4">
+
+          {/* Date */}
+          <div>
+            <label className="mb-1.5 block text-xs font-semibold text-slate-600">Date <span className="text-red-500">*</span></label>
+            <input
+              type="text"
+              value={form.date}
+              onChange={(e) => set("date", e.target.value)}
+              placeholder="e.g. 20/05/2026"
+              className={`h-10 w-full rounded-xl border px-3 text-sm text-slate-700 outline-none placeholder:text-slate-400 focus:border-blue-500 ${errors.date ? "border-red-400" : "border-slate-200"}`}
+            />
+            {errors.date && <p className="mt-1 text-xs text-red-500">{errors.date}</p>}
+          </div>
+
+          {/* Project + Module */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="mb-1.5 block text-xs font-semibold text-slate-600">Project <span className="text-red-500">*</span></label>
+              <select
+                value={form.project}
+                onChange={(e) => set("project", e.target.value)}
+                className={`h-10 w-full rounded-xl border bg-white px-3 text-sm text-slate-700 outline-none focus:border-blue-500 ${errors.project ? "border-red-400" : "border-slate-200"}`}
+              >
+                <option value="">Select project</option>
+                {PROJECTS.map((p) => <option key={p} value={p}>{p}</option>)}
+              </select>
+              {errors.project && <p className="mt-1 text-xs text-red-500">{errors.project}</p>}
+            </div>
+            <div>
+              <label className="mb-1.5 block text-xs font-semibold text-slate-600">Module <span className="text-red-500">*</span></label>
+              <select
+                value={form.module}
+                onChange={(e) => set("module", e.target.value)}
+                className={`h-10 w-full rounded-xl border bg-white px-3 text-sm text-slate-700 outline-none focus:border-blue-500 ${errors.module ? "border-red-400" : "border-slate-200"}`}
+              >
+                <option value="">Select module</option>
+                {MODULES.map((m) => <option key={m} value={m}>{m}</option>)}
+              </select>
+              {errors.module && <p className="mt-1 text-xs text-red-500">{errors.module}</p>}
+            </div>
+          </div>
+
+          {/* Task */}
+          <div>
+            <label className="mb-1.5 block text-xs font-semibold text-slate-600">Task Description <span className="text-red-500">*</span></label>
+            <input
+              value={form.task}
+              onChange={(e) => set("task", e.target.value)}
+              placeholder="Describe the task worked on"
+              className={`h-10 w-full rounded-xl border px-3 text-sm text-slate-700 outline-none placeholder:text-slate-400 focus:border-blue-500 ${errors.task ? "border-red-400" : "border-slate-200"}`}
+            />
+            {errors.task && <p className="mt-1 text-xs text-red-500">{errors.task}</p>}
+          </div>
+
+          {/* Start + End */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="mb-1.5 block text-xs font-semibold text-slate-600">Start Time <span className="text-red-500">*</span></label>
+              <input
+                value={form.start}
+                onChange={(e) => set("start", e.target.value)}
+                placeholder="e.g. 09:00 AM"
+                className={`h-10 w-full rounded-xl border px-3 text-sm text-slate-700 outline-none placeholder:text-slate-400 focus:border-blue-500 ${errors.start ? "border-red-400" : "border-slate-200"}`}
+              />
+              {errors.start && <p className="mt-1 text-xs text-red-500">{errors.start}</p>}
+            </div>
+            <div>
+              <label className="mb-1.5 block text-xs font-semibold text-slate-600">End Time <span className="text-red-500">*</span></label>
+              <input
+                value={form.end}
+                onChange={(e) => set("end", e.target.value)}
+                placeholder="e.g. 06:00 PM"
+                className={`h-10 w-full rounded-xl border px-3 text-sm text-slate-700 outline-none placeholder:text-slate-400 focus:border-blue-500 ${errors.end ? "border-red-400" : "border-slate-200"}`}
+              />
+              {errors.end && <p className="mt-1 text-xs text-red-500">{errors.end}</p>}
+            </div>
+          </div>
+
+          {/* Hours + Status + Type */}
+          <div className="grid grid-cols-3 gap-4">
+            <div>
+              <label className="mb-1.5 block text-xs font-semibold text-slate-600">Hours <span className="text-red-500">*</span></label>
+              <input
+                value={form.hours}
+                onChange={(e) => set("hours", e.target.value)}
+                placeholder="e.g. 08:00"
+                className={`h-10 w-full rounded-xl border px-3 text-sm text-slate-700 outline-none placeholder:text-slate-400 focus:border-blue-500 ${errors.hours ? "border-red-400" : "border-slate-200"}`}
+              />
+              {errors.hours && <p className="mt-1 text-xs text-red-500">{errors.hours}</p>}
+            </div>
+            <div>
+              <label className="mb-1.5 block text-xs font-semibold text-slate-600">Status <span className="text-red-500">*</span></label>
+              <select
+                value={form.status}
+                onChange={(e) => set("status", e.target.value)}
+                className={`h-10 w-full rounded-xl border bg-white px-3 text-sm text-slate-700 outline-none focus:border-blue-500 ${errors.status ? "border-red-400" : "border-slate-200"}`}
+              >
+                <option value="">Select</option>
+                <option value="Billable">Billable</option>
+                <option value="Non Billable">Non Billable</option>
+              </select>
+              {errors.status && <p className="mt-1 text-xs text-red-500">{errors.status}</p>}
+            </div>
+            <div>
+              <label className="mb-1.5 block text-xs font-semibold text-slate-600">Type <span className="text-red-500">*</span></label>
+              <select
+                value={form.type}
+                onChange={(e) => set("type", e.target.value)}
+                className={`h-10 w-full rounded-xl border bg-white px-3 text-sm text-slate-700 outline-none focus:border-blue-500 ${errors.type ? "border-red-400" : "border-slate-200"}`}
+              >
+                <option value="">Select</option>
+                {TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
+              </select>
+              {errors.type && <p className="mt-1 text-xs text-red-500">{errors.type}</p>}
+            </div>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="flex items-center justify-end gap-3 border-t border-slate-200 px-6 py-4">
+          <button onClick={onClose} className="flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-600 hover:bg-slate-50">
+            <X size={14} /> Cancel
+          </button>
+          <button
+            onClick={() => { if (validate()) onSave(form); }}
+            className="flex h-10 items-center gap-2 rounded-xl bg-blue-600 px-5 text-sm font-semibold text-white hover:bg-blue-700"
+          >
+            <Save size={14} />
+            {isEdit ? "Update Entry" : "Add Entry"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────── DELETE MODAL ─────────────────── */
+
+function DeleteModal({ item, onConfirm, onClose }) {
+  return (
+    <div className="fixed inset-0 z-[999] flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-sm">
+      <div className="w-full max-w-sm overflow-hidden rounded-2xl bg-white shadow-2xl">
+        <div className="flex items-center justify-between border-b border-slate-200 px-6 py-5">
+          <div>
+            <h2 className="text-lg font-bold text-slate-900">Delete Entry</h2>
+            <p className="mt-0.5 text-sm text-slate-500">This action cannot be undone.</p>
+          </div>
+          <button onClick={onClose} className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 text-slate-400 hover:bg-slate-50">
+            <X size={16} />
+          </button>
+        </div>
+        <div className="px-6 py-5">
+          <div className="flex items-start gap-3 rounded-xl bg-red-50 px-4 py-3">
+            <AlertTriangle size={18} className="mt-0.5 shrink-0 text-red-500" />
+            <p className="text-sm text-red-700">
+              Delete entry for{" "}
+              <span className="font-semibold">"{item.project} — {item.task}"</span>?
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center justify-end gap-3 border-t border-slate-200 px-6 py-4">
+          <button onClick={onClose} className="flex h-10 items-center rounded-xl border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-600 hover:bg-slate-50">
+            Cancel
+          </button>
+          <button onClick={onConfirm} className="flex h-10 items-center gap-2 rounded-xl bg-red-600 px-5 text-sm font-semibold text-white hover:bg-red-700">
+            <Trash2 size={14} /> Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────── MAIN PAGE ─────────────────── */
+
+export default function ModernTimesheetPage() {
+  const [entries, setEntries]         = useState(INITIAL_DATA);
+  const [projectFilter, setProjectFilter] = useState("All");
+  const [typeFilter, setTypeFilter]   = useState("All");
+  const [search, setSearch]           = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
+  const [nextId, setNextId]           = useState(7);
+  const [fromDate, setFromDate]       = useState("");
+  const [toDate, setToDate]           = useState("");
+
+  // Modals
+  const [viewItem, setViewItem]       = useState(null);
+  const [addModal, setAddModal]       = useState(false);
+  const [editItem, setEditItem]       = useState(null);
+  const [deleteItem, setDeleteItem]   = useState(null);
+
+  /* ── stats ── */
+  const stats = useMemo(() => ({
+    billable:    entries.filter((i) => i.status === "Billable").length,
+    nonBillable: entries.filter((i) => i.status === "Non Billable").length,
+    projects:    new Set(entries.map((i) => i.project)).size,
+    totalHours:  entries.reduce((acc, i) => {
+      const [h, m] = i.hours.split(":").map(Number);
+      return acc + h + m / 60;
+    }, 0).toFixed(1),
+  }), [entries]);
+
+  /* ── filtered ── */
+  const filteredData = useMemo(() => {
+    return entries.filter((item) => {
+      const mp = projectFilter === "All" || item.project === projectFilter;
+      const mt = typeFilter    === "All" || item.status  === typeFilter;
+      const ms =
+        item.task.toLowerCase().includes(search.toLowerCase()) ||
+        item.project.toLowerCase().includes(search.toLowerCase()) ||
+        item.module.toLowerCase().includes(search.toLowerCase());
+      return mp && mt && ms;
+    });
+  }, [entries, projectFilter, typeFilter, search]);
+
+  const totalPages    = Math.max(1, Math.ceil(filteredData.length / itemsPerPage));
+  const safePage      = Math.min(currentPage, totalPages);
+  const paginatedData = filteredData.slice((safePage - 1) * itemsPerPage, safePage * itemsPerPage);
+  const startRow      = filteredData.length === 0 ? 0 : (safePage - 1) * itemsPerPage + 1;
+  const endRow        = Math.min(safePage * itemsPerPage, filteredData.length);
+
+  /* ── handlers ── */
+  const handleAdd = (form) => {
+    setEntries((prev) => [{ id: nextId, ...form }, ...prev]);
+    setNextId((n) => n + 1);
+    setAddModal(false);
+  };
+
+  const handleEdit = (form) => {
+    setEntries((prev) => prev.map((e) => e.id === editItem.id ? { ...e, ...form } : e));
+    setEditItem(null);
+  };
+
+  const handleDelete = () => {
+    setEntries((prev) => prev.filter((e) => e.id !== deleteItem.id));
+    setDeleteItem(null);
+  };
+
+  const editFormData = editItem
+    ? { date: editItem.date, project: editItem.project, module: editItem.module,
+        task: editItem.task, start: editItem.start, end: editItem.end,
+        hours: editItem.hours, status: editItem.status, type: editItem.type }
+    : null;
+
+  return (
+    <div className="space-y-6">
+
+      {/* ── MODALS ── */}
+      {viewItem   && <ViewModal            item={viewItem}   onClose={() => setViewItem(null)} />}
+      {addModal   && <TimesheetFormModal   mode="add"  initialData={EMPTY_FORM}  onSave={handleAdd}  onClose={() => setAddModal(false)} />}
+      {editItem   && <TimesheetFormModal   mode="edit" initialData={editFormData} onSave={handleEdit} onClose={() => setEditItem(null)} />}
+      {deleteItem && <DeleteModal          item={deleteItem} onConfirm={handleDelete} onClose={() => setDeleteItem(null)} />}
+
+      {/* ── HEADER ── */}
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-600">Employee Management</p>
+          <h1 className="mt-2 text-3xl font-bold tracking-tight text-slate-900">Timesheet Dashboard</h1>
+          <p className="mt-2 text-sm text-slate-500">
+            Monitor working hours, billable tasks and project workflow.
+          </p>
+        </div>
+        <div className="flex items-center gap-3">
+          <button className="flex h-11 items-center gap-2 rounded-xl border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-700 hover:bg-slate-50">
+            <Download size={16} /> Export
+          </button>
+          <button
+            onClick={() => setAddModal(true)}
+            className="flex h-11 items-center gap-2 rounded-xl bg-blue-600 px-5 text-sm font-semibold text-white transition-all hover:bg-blue-700"
+          >
+            <Plus size={16} /> Add Timesheet
+          </button>
+        </div>
+      </div>
+
+      {/* ── STATS ── */}
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
+        {[
+          { title: "TOTAL HOURS",  value: `${stats.totalHours}h`, sub: "Logged this period",      border: "border-l-blue-500",    iconBg: "bg-blue-50",    iconColor: "text-blue-600",    Icon: Clock3         },
+          { title: "BILLABLE",     value: stats.billable,         sub: "Billable entries",         border: "border-l-emerald-500", iconBg: "bg-emerald-50", iconColor: "text-emerald-600", Icon: CheckCircle2   },
+          { title: "NON BILLABLE", value: stats.nonBillable,      sub: "Non-billable entries",     border: "border-l-amber-500",   iconBg: "bg-amber-50",   iconColor: "text-amber-600",   Icon: AlertCircle    },
+          { title: "PROJECTS",     value: stats.projects,         sub: "Active projects tracked",  border: "border-l-cyan-500",    iconBg: "bg-cyan-50",    iconColor: "text-cyan-600",    Icon: FolderKanban   },
+        ].map(({ title, value, sub, border, iconBg, iconColor, Icon }) => (
+          <div
+            key={title}
+            className={`relative overflow-hidden rounded-2xl border border-slate-200 border-l-[3px] ${border} bg-white px-5 py-5 shadow-sm`}
+          >
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">{title}</p>
+                <h2 className="mt-3 text-[34px] font-bold leading-none tracking-tight text-slate-900">{value}</h2>
+              </div>
+              <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${iconBg}`}>
+                <Icon size={18} className={iconColor} />
+              </div>
+            </div>
+            <p className="mt-4 text-xs font-medium text-slate-500">{sub}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* ── TABLE ── */}
+      <div className="overflow-hidden rounded-[24px] border border-slate-200 bg-white shadow-sm">
+
+        {/* TOOLBAR */}
+        <div className="flex flex-col gap-3 border-b border-slate-200 px-5 py-4 lg:flex-row lg:items-center lg:justify-between">
           {/* LEFT */}
-          <div className="flex flex-wrap items-center gap-3">
-            {/* PROJECT */}
+          <div className="flex flex-wrap items-center gap-2">
             <select
               value={projectFilter}
-              onChange={(e) => {
-                setProjectFilter(e.target.value);
-
-                setCurrentPage(1);
-              }}
-              className="
-                h-10 rounded-xl
-                border border-slate-200
-                bg-white px-4
-                text-sm font-medium text-slate-700
-                outline-none
-              "
+              onChange={(e) => { setProjectFilter(e.target.value); setCurrentPage(1); }}
+              className="h-10 rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 outline-none focus:border-blue-500"
             >
               <option value="All">All Projects</option>
-
-              <option value="ERP Dashboard">ERP Dashboard</option>
-
-              <option value="CRM System">CRM System</option>
-
-              <option value="HRMS Portal">HRMS Portal</option>
-
-              <option value="Inventory System">Inventory System</option>
+              {PROJECTS.map((p) => <option key={p} value={p}>{p}</option>)}
             </select>
 
-            {/* STATUS */}
             <select
               value={typeFilter}
-              onChange={(e) => {
-                setTypeFilter(e.target.value);
-
-                setCurrentPage(1);
-              }}
-              className="
-                h-10 rounded-xl
-                border border-slate-200
-                bg-white px-4
-                text-sm font-medium text-slate-700
-                outline-none
-              "
+              onChange={(e) => { setTypeFilter(e.target.value); setCurrentPage(1); }}
+              className="h-10 rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 outline-none focus:border-blue-500"
             >
               <option value="All">All Status</option>
-
               <option value="Billable">Billable</option>
-
               <option value="Non Billable">Non Billable</option>
             </select>
 
-            {/* FROM DATE */}
             <input
               type="date"
-              className="
-                h-10 rounded-xl
-                border border-slate-200
-                bg-white px-4
-                text-sm font-medium text-slate-700
-                outline-none
-              "
+              value={fromDate}
+              onChange={(e) => { setFromDate(e.target.value); setCurrentPage(1); }}
+              className="h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-700 outline-none focus:border-blue-500"
             />
-
-            {/* TO DATE */}
             <input
               type="date"
-              className="
-                h-10 rounded-xl
-                border border-slate-200
-                bg-white px-4
-                text-sm font-medium text-slate-700
-                outline-none
-              "
+              value={toDate}
+              onChange={(e) => { setToDate(e.target.value); setCurrentPage(1); }}
+              className="h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-700 outline-none focus:border-blue-500"
             />
 
-            {/* RESET */}
             <button
-              onClick={() => {
-                setProjectFilter("All");
-
-                setTypeFilter("All");
-
-                setSearch("");
-
-                setCurrentPage(1);
-              }}
-              className="
-                flex h-10 items-center gap-2
-                rounded-xl border border-slate-200
-                bg-white px-4
-                text-sm font-medium text-slate-600
-                transition-all hover:bg-slate-50
-              "
+              onClick={() => { setProjectFilter("All"); setTypeFilter("All"); setSearch(""); setFromDate(""); setToDate(""); setCurrentPage(1); }}
+              className="flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-600 hover:bg-slate-50"
             >
-              <RefreshCcw size={14} />
-              Reset
+              <RefreshCcw size={14} /> Reset
             </button>
           </div>
 
           {/* RIGHT */}
-          <div className="flex items-center gap-3">
-            {/* SEARCH */}
-            <div
-              className="
-                flex h-10 items-center gap-2
-                rounded-xl border border-slate-200
-                bg-white px-4
-              "
-            >
-              <Search size={15} className="text-slate-400" />
-
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 focus-within:border-blue-500">
+              <Search size={14} className="text-slate-400" />
               <input
-                type="text"
-                placeholder="Search task..."
                 value={search}
-                onChange={(e) => {
-                  setSearch(e.target.value);
-
-                  setCurrentPage(1);
-                }}
-                className="
-                  bg-transparent text-sm
-                  text-slate-700 outline-none
-                  placeholder:text-slate-400
-                "
+                onChange={(e) => { setSearch(e.target.value); setCurrentPage(1); }}
+                placeholder="Search task or project..."
+                className="bg-transparent text-sm text-slate-700 outline-none placeholder:text-slate-400"
               />
             </div>
-
-            {/* SHOW */}
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-slate-500">Show</span>
-
+            <div className="flex items-center gap-2 text-sm text-slate-500">
+              <span>Show</span>
               <select
                 value={itemsPerPage}
-                onChange={(e) => {
-                  setItemsPerPage(Number(e.target.value));
-
-                  setCurrentPage(1);
-                }}
-                className="
-                  h-10 rounded-xl
-                  border border-slate-200
-                  bg-white px-3
-                  text-sm font-medium text-slate-700
-                  outline-none
-                "
+                onChange={(e) => { setItemsPerPage(Number(e.target.value)); setCurrentPage(1); }}
+                className="h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-700 outline-none"
               >
                 <option value={5}>5</option>
-
                 <option value={10}>10</option>
-
                 <option value={15}>15</option>
               </select>
-
-              <span className="text-sm text-slate-500">per page</span>
+              <span>per page</span>
             </div>
           </div>
         </div>
 
-        {/* ================= TABLE TOP ================= */}
-
-        <div
-          className="
-            flex items-center justify-between
-            border-b border-slate-200
-            px-6 py-5
-          "
-        >
+        {/* TABLE TITLE BAR */}
+        <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
           <div className="flex items-center gap-4">
-            <div
-              className="
-                flex h-12 w-12 items-center
-                justify-center rounded-xl
-                bg-blue-50
-              "
-            >
-              <BriefcaseBusiness size={22} className="text-blue-600" />
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50">
+              <BriefcaseBusiness size={19} className="text-blue-600" />
             </div>
-
             <div>
-              <h2 className="text-xl font-bold text-slate-900">
-                Timesheet Entries
-              </h2>
-
-              <p className="mt-1 text-sm text-slate-500">
-                Total {filteredData.length} records
-              </p>
+              <h2 className="font-semibold text-slate-800">Timesheet Entries</h2>
+              <p className="mt-0.5 text-xs text-slate-500">Total {filteredData.length} records</p>
             </div>
           </div>
         </div>
 
-        {/* ================= TABLE HEADER ================= */}
+        {/* TABLE */}
+        <div className="overflow-x-auto">
+          <table className="min-w-full">
+            <thead className="bg-slate-100/70">
+              <tr className="border-b border-slate-200">
+                {["Date", "Project", "Module", "Task", "Start", "End", "Hours", "Status", "Action"].map((head) => (
+                  <th
+                    key={head}
+                    className="whitespace-nowrap px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400"
+                  >
+                    {head}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {paginatedData.map((item) => (
+                <tr key={item.id} className="border-b border-slate-100 transition-all hover:bg-blue-50/40">
 
-        <div
-          className="
-            hidden xl:grid
-            grid-cols-[1fr_1.2fr_1fr_2fr_1fr_1fr_1fr_1.2fr_130px]
-            gap-4
-            bg-slate-50
-            px-6 py-4
-            border-b border-slate-200
-          "
-        >
-          {[
-            "DATE",
-            "PROJECT",
-            "MODULE",
-            "TASK",
-            "START",
-            "END",
-            "HOURS",
-            "STATUS",
-            "ACTIONS",
-          ].map((head) => (
-            <div
-              key={head}
-              className="
-                text-[11px]
-                font-semibold uppercase
-                tracking-[0.14em]
-                text-slate-400
-              "
-            >
-              {head}
-            </div>
-          ))}
+                  {/* DATE */}
+                  <td className="whitespace-nowrap px-5 py-4">
+                    <div className="flex items-center gap-2">
+                      <CalendarDays size={13} className="text-blue-600" />
+                      <span className="text-sm font-semibold text-slate-700">{item.date}</span>
+                    </div>
+                  </td>
+
+                  {/* PROJECT */}
+                  <td className="whitespace-nowrap px-5 py-4">
+                    <div className="flex items-center gap-2.5">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50">
+                        <BriefcaseBusiness size={13} className="text-blue-600" />
+                      </div>
+                      <span className="text-sm font-semibold text-slate-700">{item.project}</span>
+                    </div>
+                  </td>
+
+                  {/* MODULE */}
+                  <td className="whitespace-nowrap px-5 py-4">
+                    <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+                      {item.module}
+                    </span>
+                  </td>
+
+                  {/* TASK */}
+                  <td className="min-w-[220px] px-5 py-4">
+                    <p className="text-sm text-slate-600">{item.task}</p>
+                  </td>
+
+                  {/* START */}
+                  <td className="whitespace-nowrap px-5 py-4">
+                    <span className="text-sm text-slate-600">{item.start}</span>
+                  </td>
+
+                  {/* END */}
+                  <td className="whitespace-nowrap px-5 py-4">
+                    <span className="text-sm text-slate-600">{item.end}</span>
+                  </td>
+
+                  {/* HOURS */}
+                  <td className="whitespace-nowrap px-5 py-4">
+                    <div className="flex items-center gap-1.5">
+                      <Clock3 size={13} className="text-blue-600" />
+                      <span className="text-sm font-semibold text-slate-700">{item.hours}</span>
+                    </div>
+                  </td>
+
+                  {/* STATUS */}
+                  <td className="whitespace-nowrap px-5 py-4">
+                    <StatusBadge s={item.status} />
+                  </td>
+
+                  {/* ACTION */}
+                  <td className="whitespace-nowrap px-5 py-4">
+                    <ActionMenu
+                      item={item}
+                      onView={setViewItem}
+                      onEdit={(i) => setEditItem(i)}
+                      onDelete={(i) => setDeleteItem(i)}
+                    />
+                  </td>
+                </tr>
+              ))}
+
+              {/* EMPTY */}
+              {paginatedData.length === 0 && (
+                <tr>
+                  <td colSpan={9} className="px-5 py-16 text-center">
+                    <div className="flex flex-col items-center justify-center">
+                      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100">
+                        <BriefcaseBusiness size={28} className="text-slate-400" />
+                      </div>
+                      <p className="font-semibold text-slate-700">No entries found.</p>
+                      <p className="mt-1 text-sm text-slate-400">Try adjusting filters or add a new entry.</p>
+                      <button
+                        onClick={() => setAddModal(true)}
+                        className="mt-4 flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700"
+                      >
+                        <Plus size={14} /> Add Entry
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
 
-        {/* ================= TABLE BODY ================= */}
-
-        <div className="divide-y divide-slate-100">
-          {paginatedData.map((item) => (
-            <div
-              key={item.id}
-              className="
-                  grid grid-cols-1
-                  gap-5 px-6 py-5
-                  transition-all
-                  hover:bg-blue-50/20
-                  xl:grid-cols-[1fr_1.2fr_1fr_2fr_1fr_1fr_1fr_1.2fr_130px]
-                "
-            >
-              {/* DATE */}
-              <div>
-                <p className="text-xs text-slate-400">Date</p>
-
-                <div className="mt-1 flex items-center gap-2">
-                  <CalendarDays size={15} className="text-blue-600" />
-
-                  <h3 className="font-semibold text-slate-700">{item.date}</h3>
-                </div>
-              </div>
-
-              {/* PROJECT */}
-              <div>
-                <p className="text-xs text-slate-400">Project</p>
-
-                <h3 className="mt-1 font-semibold text-slate-800">
-                  {item.project}
-                </h3>
-              </div>
-
-              {/* MODULE */}
-              <div>
-                <p className="text-xs text-slate-400">Module</p>
-
-                <span
-                  className="
-                      mt-2 inline-flex items-center
-                      rounded-full bg-slate-100
-                      px-4 py-1.5
-                      text-xs font-semibold text-slate-700
-                    "
-                >
-                  {item.module}
-                </span>
-              </div>
-
-              {/* TASK */}
-              <div>
-                <p className="text-xs text-slate-400">Task</p>
-
-                <h3 className="mt-1 text-sm leading-6 font-medium text-slate-700">
-                  {item.task}
-                </h3>
-              </div>
-
-              {/* START */}
-              <div>
-                <p className="text-xs text-slate-400">Start</p>
-
-                <h3 className="mt-1 font-medium text-slate-700">
-                  {item.start}
-                </h3>
-              </div>
-
-              {/* END */}
-              <div>
-                <p className="text-xs text-slate-400">End</p>
-
-                <h3 className="mt-1 font-medium text-slate-700">{item.end}</h3>
-              </div>
-
-              {/* HOURS */}
-              <div>
-                <p className="text-xs text-slate-400">Hours</p>
-
-                <div className="mt-1 flex items-center gap-2">
-                  <Clock3 size={15} className="text-blue-600" />
-
-                  <h3 className="font-semibold text-slate-800">{item.hours}</h3>
-                </div>
-              </div>
-
-              {/* STATUS */}
-              <div>
-                <p className="text-xs text-slate-400">Status</p>
-
-                <span
-                  className={`
-                      mt-2 inline-flex items-center
-                      rounded-full px-4 py-1.5
-                      text-xs font-semibold
-
-                      ${
-                        item.status === "Billable"
-                          ? "bg-emerald-50 text-emerald-600"
-                          : "bg-amber-50 text-amber-600"
-                      }
-                    `}
-                >
-                  {item.status}
-                </span>
-              </div>
-
-              {/* ACTIONS */}
-              <div className="flex items-center gap-2">
-                <button
-                  className="
-                      flex h-10 w-10
-                      items-center justify-center
-                      rounded-xl border border-slate-200
-                      bg-white text-blue-600
-                      transition-all hover:bg-blue-600 hover:text-white
-                    "
-                >
-                  <Eye size={16} />
-                </button>
-
-                <button
-                  className="
-                      flex h-10 w-10
-                      items-center justify-center
-                      rounded-xl border border-slate-200
-                      bg-white text-violet-600
-                      transition-all hover:bg-violet-600 hover:text-white
-                    "
-                >
-                  <Pencil size={16} />
-                </button>
-
-                <button
-                  className="
-                      flex h-10 w-10
-                      items-center justify-center
-                      rounded-xl border border-slate-200
-                      bg-white text-red-500
-                      transition-all hover:bg-red-500 hover:text-white
-                    "
-                >
-                  <Trash2 size={16} />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* ================= PAGINATION ================= */}
-
-        <div
-          className="
-            flex items-center justify-between
-            border-t border-slate-200
-            bg-white px-6 py-5
-          "
-        >
+        {/* FOOTER */}
+        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 bg-slate-50/50 px-5 py-4">
           <p className="text-sm text-slate-500">
             Showing{" "}
-            <span className="font-semibold text-slate-700">
-              {paginatedData.length}
-            </span>{" "}
+            <span className="font-semibold text-slate-700">{startRow}</span> to{" "}
+            <span className="font-semibold text-slate-700">{endRow}</span> of{" "}
+            <span className="font-semibold text-slate-700">{filteredData.length}</span>{" "}
             records
           </p>
-
           <div className="flex items-center gap-2">
             <button
-              disabled={currentPage === 1}
-              onClick={() => setCurrentPage((prev) => prev - 1)}
-              className="
-                flex h-10 w-10
-                items-center justify-center
-                rounded-xl border border-slate-200
-                bg-white text-slate-700
-                hover:bg-slate-50
-              "
+              disabled={safePage === 1}
+              onClick={() => setCurrentPage((p) => p - 1)}
+              className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 disabled:opacity-40"
             >
-              <ChevronLeft size={16} />
+              <ChevronLeft size={15} />
             </button>
-
-            {Array.from({
-              length: totalPages,
-            }).map((_, index) => (
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((pg) => (
               <button
-                key={index}
-                onClick={() => setCurrentPage(index + 1)}
-                className={`
-                    flex h-10 w-10
-                    items-center justify-center
-                    rounded-xl text-sm font-semibold
-                    transition-all
-
-                    ${
-                      currentPage === index + 1
-                        ? "bg-blue-600 text-white"
-                        : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
-                    }
-                  `}
+                key={pg}
+                onClick={() => setCurrentPage(pg)}
+                className={`flex h-9 w-9 items-center justify-center rounded-xl text-sm font-semibold ${
+                  safePage === pg
+                    ? "bg-blue-600 text-white"
+                    : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
+                }`}
               >
-                {index + 1}
+                {pg}
               </button>
             ))}
-
             <button
-              disabled={currentPage === totalPages}
-              onClick={() => setCurrentPage((prev) => prev + 1)}
-              className="
-                flex h-10 w-10
-                items-center justify-center
-                rounded-xl border border-slate-200
-                bg-white text-slate-700
-                hover:bg-slate-50
-              "
+              disabled={safePage === totalPages}
+              onClick={() => setCurrentPage((p) => p + 1)}
+              className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 disabled:opacity-40"
             >
-              <ChevronRight size={16} />
+              <ChevronRight size={15} />
             </button>
           </div>
         </div>
