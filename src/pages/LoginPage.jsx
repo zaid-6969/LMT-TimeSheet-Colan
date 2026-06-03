@@ -1,375 +1,200 @@
 import { useState } from "react";
 import {
   Eye, EyeOff, Mail, Lock, ArrowRight,
-  ShieldCheck, CheckCircle2, AlertCircle,
+  ShieldCheck, CheckCircle2, AlertCircle, Image,
 } from "lucide-react";
 import logo from "../assets/colan-logo-main.png";
 import { useNavigate } from "react-router-dom";
+import mainimage from "../assets/main-image-1.jpg"
 
 /* ─────────────────────────────────────────
-   Inline styles — no Tailwind conflicts
+   Styles
 ───────────────────────────────────────── */
 const css = `
-  @import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700;800&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   .lp-root {
-    font-family: 'Exo 2', sans-serif;
+    font-family: 'Inter', sans-serif;
     min-height: 100vh;
     display: flex;
     background: #f0f5fb;
   }
 
-  /* ── LEFT PANEL ── */
+  /* ── LEFT PANEL (form) ── */
   .lp-left {
-    flex: 0 0 52%;
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    padding: 48px;
-    background: #060f20;
-  }
-
-  /* Geometric grid pattern */
-  .lp-left::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(42,133,212,0.07) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(42,133,212,0.07) 1px, transparent 1px);
-    background-size: 48px 48px;
-    z-index: 0;
-  }
-
-  /* Deep gradient overlay */
-  .lp-left::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background:
-      radial-gradient(ellipse at 20% 20%, rgba(26,106,173,0.35) 0%, transparent 60%),
-      radial-gradient(ellipse at 80% 80%, rgba(0,200,224,0.2) 0%, transparent 55%),
-      radial-gradient(ellipse at 60% 10%, rgba(192,54,90,0.15) 0%, transparent 45%);
-    z-index: 0;
-  }
-
-  .lp-left-content { position: relative; z-index: 1; }
-
-  /* Floating blobs */
-  .blob {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(60px);
-    opacity: 0.25;
-    z-index: 0;
-    animation: blobFloat 8s ease-in-out infinite;
-  }
-  .blob-1 { width: 320px; height: 320px; background: #1a6aad; top: -80px; right: -60px; animation-delay: 0s; }
-  .blob-2 { width: 240px; height: 240px; background: #00c8e0; bottom: 120px; left: -60px; animation-delay: 3s; }
-  .blob-3 { width: 180px; height: 180px; background: #c0365a; top: 40%; right: 10%; animation-delay: 5s; }
-
-  @keyframes blobFloat {
-    0%, 100% { transform: translateY(0) scale(1); }
-    50% { transform: translateY(-24px) scale(1.05); }
-  }
-
-  /* Icon cluster in center of left panel */
-  .lp-icon-cluster {
-    position: absolute;
-    inset: 0;
+    flex: 0 0 46%;
+    background: #ffffff;
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 48px 52px;
+    position: relative;
     z-index: 1;
-  }
-
-  .lp-center-badge {
-    width: 140px; height: 140px;
-    border-radius: 36px;
-    background: linear-gradient(135deg, rgba(26,106,173,0.5), rgba(0,200,224,0.3));
-    border: 1px solid rgba(58,160,240,0.3);
-    backdrop-filter: blur(20px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 0 60px rgba(42,133,212,0.3), 0 0 120px rgba(0,200,224,0.1);
-    animation: badgePulse 3s ease-in-out infinite;
-  }
-
-  @keyframes badgePulse {
-    0%, 100% { box-shadow: 0 0 60px rgba(42,133,212,0.3), 0 0 120px rgba(0,200,224,0.1); }
-    50% { box-shadow: 0 0 80px rgba(42,133,212,0.5), 0 0 160px rgba(0,200,224,0.2); }
-  }
-
-  .lp-center-logo { width: 90px; object-fit: contain; filter: brightness(1.1); }
-
-  /* Orbiting rings */
-  .ring {
-    position: absolute;
-    border-radius: 50%;
-    border: 1px solid rgba(42,133,212,0.15);
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    animation: ringRotate 20s linear infinite;
-  }
-  .ring-1 { width: 220px; height: 220px; animation-duration: 20s; }
-  .ring-2 { width: 330px; height: 330px; animation-duration: 30s; animation-direction: reverse; border-color: rgba(0,200,224,0.1); }
-  .ring-3 { width: 450px; height: 450px; animation-duration: 40s; border-color: rgba(192,54,90,0.08); }
-
-  @keyframes ringRotate { to { transform: translate(-50%, -50%) rotate(360deg); } }
-
-  /* Ring dots */
-  .ring-dot {
-    position: absolute;
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    top: -4px; left: 50%;
-    transform: translateX(-50%);
-  }
-  .ring-dot-blue  { background: #3aa0f0; box-shadow: 0 0 8px #3aa0f0; }
-  .ring-dot-cyan  { background: #00c8e0; box-shadow: 0 0 8px #00c8e0; }
-  .ring-dot-pink  { background: #c0365a; box-shadow: 0 0 8px #c0365a; }
-
-  /* Bottom info card */
-  .lp-info-card {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
-    backdrop-filter: blur(20px);
-    border-radius: 20px;
-    padding: 28px 32px;
-    animation: slideUpIn 0.8s ease both;
-  }
-
-  @keyframes slideUpIn {
-    from { opacity: 0; transform: translateY(30px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  .lp-info-title {
-    font-size: 26px;
-    font-weight: 800;
-    color: #fff;
-    line-height: 1.25;
-    margin-bottom: 10px;
-  }
-
-  .lp-info-title span {
-    background: linear-gradient(90deg, #3aa0f0, #00c8e0);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-
-  .lp-info-desc { font-size: 14px; color: rgba(255,255,255,0.55); line-height: 1.7; margin-bottom: 24px; }
-
-  .lp-features { display: flex; flex-direction: column; gap: 10px; }
-  .lp-feature {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 13px;
-    color: rgba(255,255,255,0.7);
-    font-weight: 500;
-  }
-  .lp-feature-dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-
-  /* ── RIGHT PANEL ── */
-  .lp-right {
-    flex: 0 0 48%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 40px 32px;
-    background: #f0f5fb;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .lp-right::before {
-    content: '';
-    position: absolute;
-    top: -100px; right: -100px;
-    width: 400px; height: 400px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(26,106,173,0.06) 0%, transparent 70%);
+    box-shadow: 2px 0 24px rgba(26,106,173,0.06);
   }
 
   .lp-form-wrap {
     width: 100%;
-    max-width: 420px;
-    position: relative;
-    z-index: 1;
-    animation: slideUpIn 0.6s ease both;
+    max-width: 380px;
+    animation: fadeUp 0.5s ease both;
   }
 
-  /* Logo area */
-  .lp-logo-wrap { margin-bottom: 32px; }
-  .lp-logo-img { height: 38px; object-fit: contain; }
-
-  /* Card */
-  .lp-card {
-    background: #ffffff;
-    border-radius: 24px;
-    padding: 40px 36px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.03), 0 20px 60px rgba(26,106,173,0.1);
-    border: 1px solid rgba(26,106,173,0.08);
-    position: relative;
-    overflow: hidden;
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
 
-  .lp-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, #c0365a, #1a6aad, #3aa0f0, #00c8e0);
+  /* Brand */
+  .lp-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 44px;
   }
-
-  .lp-card-glow {
-    position: absolute;
-    top: -60px; right: -60px;
-    width: 180px; height: 180px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(58,160,240,0.08) 0%, transparent 70%);
-    pointer-events: none;
-  }
+  .lp-logo-img { height: 34px; object-fit: contain; }
 
   /* Heading */
-  .lp-heading { margin-bottom: 28px; }
-  .lp-heading h1 { font-size: 24px; font-weight: 800; color: #0d1f33; line-height: 1.2; margin-bottom: 6px; }
-  .lp-heading p { font-size: 13.5px; color: #7a96b0; line-height: 1.6; }
+  .lp-heading { margin-bottom: 32px; }
+  .lp-heading h1 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #0d1f33;
+    letter-spacing: -0.025em;
+    margin-bottom: 6px;
+  }
+  .lp-heading p { font-size: 13.5px; color: #8a9db8; line-height: 1.65; }
 
   /* Field */
-  .lp-field { margin-bottom: 20px; }
+  .lp-field { margin-bottom: 18px; }
+
   .lp-label {
     display: block;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.06em;
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.055em;
     text-transform: uppercase;
-    color: #4a6080;
-    margin-bottom: 8px;
+    color: #64788c;
+    margin-bottom: 7px;
   }
 
   .lp-input-wrap { position: relative; }
 
   .lp-input-icon {
     position: absolute;
-    left: 14px;
+    left: 13px;
     top: 50%; transform: translateY(-50%);
-    transition: color 0.2s;
     pointer-events: none;
+    display: flex; align-items: center;
   }
 
-  .lp-input-icon-right {
+  .lp-input-eye {
     position: absolute;
-    right: 14px;
+    right: 12px;
     top: 50%; transform: translateY(-50%);
     background: none; border: none;
     cursor: pointer;
     color: #a0b4c8;
-    transition: color 0.2s;
     display: flex; align-items: center;
-    padding: 0;
+    padding: 2px;
+    transition: color 0.15s;
   }
-  .lp-input-icon-right:hover { color: #1a6aad; }
+  .lp-input-eye:hover { color: #1a6aad; }
 
   .lp-input {
     width: 100%;
-    height: 48px;
-    border-radius: 12px;
-    border: 1.5px solid #dde6f0;
+    height: 44px;
+    border-radius: 10px;
+    border: 1.5px solid #e2e9f1;
     background: #f8fafd;
-    padding: 0 44px 0 44px;
-    font-size: 14px;
-    font-family: 'Exo 2', sans-serif;
+    padding: 0 40px;
+    font-size: 13.5px;
+    font-family: 'Inter', sans-serif;
     color: #0d1f33;
     outline: none;
-    transition: all 0.2s;
+    transition: all 0.18s;
   }
-  .lp-input::placeholder { color: #a0b4c8; }
+  .lp-input::placeholder { color: #b4c4d4; }
   .lp-input:focus {
     border-color: #1a6aad;
-    background: #fff;
-    box-shadow: 0 0 0 4px rgba(26,106,173,0.1);
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(26,106,173,0.1);
   }
   .lp-input.has-error {
     border-color: #e0334c;
-    background: #fff8f8;
-    box-shadow: 0 0 0 4px rgba(224,51,76,0.08);
+    background: #fffafa;
+    box-shadow: 0 0 0 3px rgba(224,51,76,0.08);
   }
   .lp-input.is-valid {
     border-color: #22c55e;
-    background: #f8fffe;
-    box-shadow: 0 0 0 4px rgba(34,197,94,0.08);
+    background: #fafffc;
+    box-shadow: 0 0 0 3px rgba(34,197,94,0.07);
   }
 
-  .lp-input-status {
+  /* Validation status icon inside input */
+  .lp-status-icon {
     position: absolute;
-    right: 44px;
+    right: 40px;
     top: 50%; transform: translateY(-50%);
     pointer-events: none;
   }
-
-  /* password field: less right padding needed since eye button is there */
-  .lp-input.is-password { padding-right: 80px; }
-  .lp-input.is-password .lp-input-status { right: 44px; }
+  .lp-status-icon.pw-only { right: 42px; }
 
   /* Error message */
   .lp-error {
     display: flex;
     align-items: center;
-    gap: 6px;
-    margin-top: 7px;
-    font-size: 12px;
+    gap: 5px;
+    font-size: 11.5px;
     color: #e0334c;
     font-weight: 500;
+    margin-top: 6px;
     overflow: hidden;
-    max-height: 0;
-    opacity: 0;
-    transition: max-height 0.25s ease, opacity 0.25s ease, margin 0.25s ease;
+    max-height: 0; opacity: 0;
+    transition: max-height 0.22s ease, opacity 0.22s ease;
   }
-  .lp-error.visible {
-    max-height: 30px;
-    opacity: 1;
-  }
+  .lp-error.visible { max-height: 24px; opacity: 1; }
 
-  /* Hint — password strength bar */
-  .lp-strength-wrap {
-    margin-top: 8px;
+  /* Strength bar */
+  .lp-strength {
+    margin-top: 7px;
     overflow: hidden;
-    max-height: 0;
-    opacity: 0;
-    transition: max-height 0.3s ease, opacity 0.3s ease;
+    max-height: 0; opacity: 0;
+    transition: max-height 0.25s ease, opacity 0.25s ease;
   }
-  .lp-strength-wrap.visible { max-height: 40px; opacity: 1; }
-  .lp-strength-bar-bg {
-    height: 4px;
+  .lp-strength.visible { max-height: 36px; opacity: 1; }
+  .lp-bar-bg {
+    height: 3px;
     border-radius: 99px;
     background: #e8eef5;
     overflow: hidden;
-    margin-bottom: 5px;
+    margin-bottom: 4px;
   }
-  .lp-strength-bar {
-    height: 100%;
-    border-radius: 99px;
-    transition: width 0.4s ease, background 0.4s ease;
-  }
-  .lp-strength-label { font-size: 11px; font-weight: 600; }
+  .lp-bar { height: 100%; border-radius: 99px; transition: width 0.35s ease, background 0.35s ease; }
+  .lp-bar-label { font-size: 11px; font-weight: 600; }
 
-  /* Forgot */
-  .lp-forgot-row {
+  /* Bottom row: remember + forgot */
+  .lp-options {
     display: flex;
-    justify-content: flex-end;
-    margin-top: -8px;
+    align-items: center;
+    justify-content: space-between;
     margin-bottom: 24px;
+    margin-top: -2px;
+  }
+  .lp-remember {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12.5px;
+    color: #64788c;
+    cursor: pointer;
+    user-select: none;
+  }
+  .lp-remember input[type="checkbox"] {
+    accent-color: #1a6aad;
+    width: 14px; height: 14px;
+    cursor: pointer;
   }
   .lp-forgot {
     font-size: 12px;
@@ -378,121 +203,139 @@ const css = `
     background: none; border: none;
     cursor: pointer;
     text-decoration: none;
-    transition: color 0.2s;
+    transition: color 0.15s;
   }
   .lp-forgot:hover { color: #0d4a8a; text-decoration: underline; }
 
-  /* Submit */
+  /* Submit button */
   .lp-submit {
     width: 100%;
-    height: 50px;
-    border-radius: 13px;
+    height: 46px;
+    border-radius: 10px;
     border: none;
-    background: linear-gradient(135deg, #1a6aad 0%, #3aa0f0 100%);
+    background: #1a6aad;
     color: #fff;
-    font-family: 'Exo 2', sans-serif;
-    font-size: 14.5px;
-    font-weight: 700;
-    letter-spacing: 0.04em;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
     cursor: pointer;
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-    position: relative;
-    overflow: hidden;
-    transition: all 0.25s;
-    box-shadow: 0 6px 20px rgba(26,106,173,0.3);
+    display: flex; align-items: center; justify-content: center; gap: 7px;
+    transition: all 0.2s;
   }
   .lp-submit:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 30px rgba(26,106,173,0.4);
+    background: #155d9a;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(26,106,173,0.28);
   }
   .lp-submit:active:not(:disabled) { transform: translateY(0); }
-  .lp-submit:disabled { opacity: 0.75; cursor: not-allowed; }
-
-  /* Shimmer on button */
-  .lp-submit::after {
-    content: '';
-    position: absolute;
-    top: 0; left: -100%;
-    width: 60%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
-    transform: skewX(-20deg);
-    transition: left 0.6s ease;
-  }
-  .lp-submit:hover::after { left: 160%; }
+  .lp-submit:disabled { opacity: 0.7; cursor: not-allowed; }
 
   /* Spinner dots */
   .lp-dots { display: flex; gap: 5px; align-items: center; }
   .lp-dot {
-    width: 7px; height: 7px;
+    width: 6px; height: 6px;
     border-radius: 50%;
     background: rgba(255,255,255,0.9);
-    animation: dotBounce 0.9s ease-in-out infinite;
+    animation: dotBounce 0.85s ease-in-out infinite;
   }
   .lp-dot:nth-child(2) { animation-delay: 0.15s; }
   .lp-dot:nth-child(3) { animation-delay: 0.3s; }
   @keyframes dotBounce {
-    0%, 80%, 100% { transform: scale(0.7); opacity: 0.5; }
+    0%, 80%, 100% { transform: scale(0.65); opacity: 0.45; }
     40% { transform: scale(1); opacity: 1; }
   }
+
+  /* Footer */
+  .lp-footer { margin-top: 28px; text-align: center; }
+  .lp-ssl {
+    display: flex; align-items: center; justify-content: center; gap: 5px;
+    font-size: 12px; color: #a0b4c8; font-weight: 500;
+    margin-bottom: 6px;
+  }
+  .lp-copy { font-size: 11px; color: #c0ccd8; }
+
+  /* ── RIGHT PANEL (image placeholder) ── */
+  .lp-right {
+    flex: 1;
+    background: #f0f5fb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 48px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Subtle background grid */
+  .lp-right::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(26,106,173,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(26,106,173,0.05) 1px, transparent 1px);
+    background-size: 40px 40px;
+    z-index: 0;
+  }
+
+  .lp-image-slot {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 480px;
+    aspect-ratio: 4/3;
+    border-radius: 16px;
+    border: 2px dashed #c8d8ea;
+    background: rgba(255,255,255,0.55);
+    backdrop-filter: blur(4px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .lp-image-slot svg { color: #b0c4d8; }
+  .lp-image-slot p { font-size: 13px; color: #94a8be; font-weight: 500; }
 
   /* Toast */
   .lp-toast {
     position: fixed;
-    top: 24px; right: 24px;
+    top: 20px; right: 20px;
     z-index: 9999;
     background: #fff;
-    border-radius: 14px;
-    padding: 14px 18px;
-    display: flex; align-items: flex-start; gap: 12px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
-    border: 1px solid #eee;
-    min-width: 300px; max-width: 360px;
-    animation: toastIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+    border-radius: 12px;
+    padding: 12px 16px;
+    display: flex; align-items: flex-start; gap: 10px;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.1);
+    border: 0.5px solid #eee;
+    min-width: 280px; max-width: 320px;
+    animation: toastIn 0.35s cubic-bezier(0.34,1.4,0.64,1) both;
   }
-  .lp-toast.error { border-left: 4px solid #e0334c; }
-  .lp-toast.success { border-left: 4px solid #22c55e; }
+  .lp-toast.error { border-left: 3px solid #e0334c; }
+  .lp-toast.success { border-left: 3px solid #22c55e; }
   @keyframes toastIn {
-    from { opacity: 0; transform: translateX(60px); }
+    from { opacity: 0; transform: translateX(40px); }
     to   { opacity: 1; transform: translateX(0); }
   }
-  .lp-toast-icon { flex-shrink: 0; margin-top: 1px; }
-  .lp-toast-title { font-size: 13px; font-weight: 700; color: #0d1f33; margin-bottom: 2px; }
-  .lp-toast-msg   { font-size: 12px; color: #6b8aaa; line-height: 1.5; }
-
-  /* Footer */
-  .lp-footer { margin-top: 24px; text-align: center; }
-  .lp-ssl {
-    display: flex; align-items: center; justify-content: center; gap: 6px;
-    font-size: 12px; color: #7a96b0; font-weight: 500;
-    margin-bottom: 8px;
-  }
-  .lp-copy { font-size: 11.5px; color: #a0b4c8; }
+  .lp-toast-title { font-size: 13px; font-weight: 600; color: #0d1f33; margin-bottom: 2px; }
+  .lp-toast-msg   { font-size: 12px; color: #7a96b0; line-height: 1.5; }
 
   /* ── RESPONSIVE ── */
-  @media (max-width: 1024px) {
-    .lp-left { flex: 0 0 45%; padding: 36px; }
-    .lp-right { flex: 0 0 55%; }
+  @media (max-width: 900px) {
+    .lp-left { flex: 0 0 52%; padding: 40px 36px; }
   }
 
   @media (max-width: 768px) {
-    .lp-root { flex-direction: column; }
-    .lp-left {
-      flex: none;
-      height: 220px;
-      padding: 28px 24px;
-      justify-content: flex-end;
-    }
-    .lp-icon-cluster { display: none; }
-    .lp-info-title { font-size: 20px; }
-    .lp-info-desc, .lp-features { display: none; }
-    .lp-info-card { padding: 20px 24px; }
-    .lp-right { flex: none; padding: 32px 20px 40px; align-items: flex-start; }
-    .lp-card { padding: 32px 24px; }
+    .lp-root { flex-direction: column-reverse; }
+    .lp-right { min-height: 200px; padding: 24px; }
+    .lp-image-slot { aspect-ratio: 16/6; }
+    .lp-left { flex: none; padding: 36px 24px 40px; }
   }
 
   @media (max-width: 400px) {
-    .lp-card { padding: 28px 18px; border-radius: 18px; }
+    .lp-left { padding: 28px 18px 36px; }
     .lp-heading h1 { font-size: 20px; }
   }
 `;
@@ -502,10 +345,7 @@ const css = `
 ───────────────────────────────────────── */
 function validateEmail(val) {
   if (!val.trim()) return "Email is required.";
-  if (!val.includes("@")) return "Email must contain @.";
-  // accept @gmail.com, @yahoo.com, @colan.com etc — must have @ + domain + dot + tld
-  const re = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-  if (!re.test(val)) return "Enter a valid email (e.g. name@gmail.com).";
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val)) return "Enter a valid email address.";
   return "";
 }
 
@@ -523,10 +363,10 @@ function getStrength(val) {
   if (/[A-Z]/.test(val) && /[a-z]/.test(val)) score++;
   if (/[0-9]/.test(val)) score++;
   if (/[^A-Za-z0-9]/.test(val)) score++;
-  if (score <= 2) return { pct: 40, label: "Weak", color: "#f97316" };
-  if (score === 3) return { pct: 65, label: "Fair", color: "#eab308" };
-  if (score === 4) return { pct: 82, label: "Good", color: "#22c55e" };
-  return { pct: 100, label: "Strong", color: "#16a34a" };
+  if (score <= 2) return { pct: 40, label: "Weak",   color: "#f97316" };
+  if (score === 3) return { pct: 65, label: "Fair",   color: "#eab308" };
+  if (score === 4) return { pct: 82, label: "Good",   color: "#22c55e" };
+  return              { pct: 100, label: "Strong", color: "#16a34a" };
 }
 
 /* ─────────────────────────────────────────
@@ -541,7 +381,7 @@ export default function LoginPage() {
   const [focused, setFocused] = useState({ email: false, password: false });
   const [showPw,  setShowPw]  = useState(false);
   const [loading, setLoading] = useState(false);
-  const [toast,   setToast]   = useState(null); // { type, title, msg }
+  const [toast,   setToast]   = useState(null);
 
   const showToast = (type, title, msg) => {
     setToast({ type, title, msg });
@@ -587,7 +427,6 @@ export default function LoginPage() {
 
   const inputClass = (field) => {
     let cls = "lp-input";
-    if (field === "password") cls += " is-password";
     if (touched[field] && errors[field]) cls += " has-error";
     else if (touched[field] && !errors[field] && form[field]) cls += " is-valid";
     return cls;
@@ -604,13 +443,13 @@ export default function LoginPage() {
     <>
       <style>{css}</style>
 
-      {/* ── Toast ── */}
+      {/* Toast */}
       {toast && (
         <div className={`lp-toast ${toast.type}`}>
-          <div className="lp-toast-icon">
+          <div style={{ flexShrink: 0, marginTop: 1 }}>
             {toast.type === "error"
-              ? <AlertCircle size={18} color="#e0334c" />
-              : <CheckCircle2 size={18} color="#22c55e" />}
+              ? <AlertCircle size={16} color="#e0334c" />
+              : <CheckCircle2 size={16} color="#22c55e" />}
           </div>
           <div>
             <p className="lp-toast-title">{toast.title}</p>
@@ -621,193 +460,139 @@ export default function LoginPage() {
 
       <div className="lp-root">
 
-        {/* ════════════ LEFT PANEL ════════════ */}
+        {/* ════════ LEFT — FORM ════════ */}
         <div className="lp-left">
-          <div className="blob blob-1" />
-          <div className="blob blob-2" />
-          <div className="blob blob-3" />
-
-          {/* Orbiting rings + center badge */}
-          <div className="lp-icon-cluster">
-            <div className="ring ring-1"><div className="ring-dot ring-dot-blue" /></div>
-            <div className="ring ring-2"><div className="ring-dot ring-dot-cyan" /></div>
-            <div className="ring ring-3"><div className="ring-dot ring-dot-pink" /></div>
-            <div className="lp-center-badge">
-              <img src={logo} alt="Colan Infotech" className="lp-center-logo" />
-            </div>
-          </div>
-
-          {/* Bottom info card */}
-          <div className="lp-left-content">
-            <div className="lp-info-card">
-              <h2 className="lp-info-title">
-                Smart Work<br />
-                <span>Starts Here.</span>
-              </h2>
-              <p className="lp-info-desc">
-                One platform for timesheets, projects, tasks, and quality assurance — built for the modern enterprise.
-              </p>
-              <div className="lp-features">
-                {[
-                  { dot: "#3aa0f0", text: "Real-time timesheet tracking" },
-                  { dot: "#00c8e0", text: "Integrated project management" },
-                  { dot: "#5dc85d", text: "Automated approval workflows" },
-                  { dot: "#c0365a", text: "QA & RFP estimation tools" },
-                ].map((f, i) => (
-                  <div className="lp-feature" key={i}>
-                    <div className="lp-feature-dot" style={{ background: f.dot, boxShadow: `0 0 6px ${f.dot}` }} />
-                    {f.text}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* ════════════ RIGHT PANEL ════════════ */}
-        <div className="lp-right">
           <div className="lp-form-wrap">
 
-            {/* Logo */}
-            <div className="lp-logo-wrap">
+            {/* Brand */}
+            <div className="lp-brand">
               <img src={logo} alt="Colan Infotech" className="lp-logo-img" />
             </div>
 
-            {/* Card */}
-            <div className="lp-card">
-              <div className="lp-card-glow" />
+            {/* Heading */}
+            <div className="lp-heading">
+              <h1>Welcome back </h1>
+              <p>Sign in to your Colan Infotech workspace.</p>
+            </div>
 
-              <div className="lp-heading">
-                <h1>Welcome Back 👋</h1>
-                <p>Sign in to your Colan Infotech workspace.</p>
+            <form onSubmit={onSubmit} noValidate>
+
+              {/* Email */}
+              <div className="lp-field">
+                <label className="lp-label">Email address</label>
+                <div className="lp-input-wrap">
+                  <span className="lp-input-icon">
+                    <Mail size={15} color={iconColor("email")} />
+                  </span>
+                  <input
+                    className={inputClass("email")}
+                    type="email"
+                    placeholder="name@company.com"
+                    value={form.email}
+                    onChange={onChange("email")}
+                    onFocus={onFocus("email")}
+                    onBlur={onBlur("email")}
+                    autoComplete="email"
+                    style={{ paddingRight: touched.email && form.email ? "72px" : "40px" }}
+                  />
+                  {touched.email && form.email && (
+                    <span className="lp-status-icon">
+                      {errors.email
+                        ? <AlertCircle size={14} color="#e0334c" />
+                        : <CheckCircle2 size={14} color="#22c55e" />}
+                    </span>
+                  )}
+                </div>
+                <div className={`lp-error ${touched.email && errors.email ? "visible" : ""}`}>
+                  <AlertCircle size={11} />
+                  {errors.email}
+                </div>
               </div>
 
-              <form onSubmit={onSubmit} noValidate>
-
-                {/* ── Email ── */}
-                <div className="lp-field">
-                  <label className="lp-label">Email Address</label>
-                  <div className="lp-input-wrap">
-                    <span className="lp-input-icon">
-                      <Mail size={16} color={iconColor("email")} />
+              {/* Password */}
+              <div className="lp-field">
+                <label className="lp-label">Password</label>
+                <div className="lp-input-wrap">
+                  <span className="lp-input-icon">
+                    <Lock size={15} color={iconColor("password")} />
+                  </span>
+                  <input
+                    className={inputClass("password")}
+                    type={showPw ? "text" : "password"}
+                    placeholder="Min. 6 characters"
+                    value={form.password}
+                    onChange={onChange("password")}
+                    onFocus={onFocus("password")}
+                    onBlur={onBlur("password")}
+                    autoComplete="current-password"
+                    style={{ paddingRight: "76px" }}
+                  />
+                  {touched.password && form.password && (
+                    <span className="lp-status-icon pw-only">
+                      {errors.password
+                        ? <AlertCircle size={14} color="#e0334c" />
+                        : <CheckCircle2 size={14} color="#22c55e" />}
                     </span>
-                    <input
-                      className={inputClass("email")}
-                      type="email"
-                      placeholder="name@gmail.com"
-                      value={form.email}
-                      onChange={onChange("email")}
-                      onFocus={onFocus("email")}
-                      onBlur={onBlur("email")}
-                      autoComplete="email"
-                      style={{ paddingRight: touched.email && form.email ? "80px" : "44px" }}
-                    />
-                    {touched.email && form.email && (
-                      <span className="lp-input-status">
-                        {errors.email
-                          ? <AlertCircle size={15} color="#e0334c" />
-                          : <CheckCircle2 size={15} color="#22c55e" />}
-                      </span>
-                    )}
-                  </div>
-                  <div className={`lp-error ${touched.email && errors.email ? "visible" : ""}`}>
-                    <AlertCircle size={12} />
-                    {errors.email}
-                  </div>
-                </div>
-
-                {/* ── Password ── */}
-                <div className="lp-field">
-                  <label className="lp-label">Password</label>
-                  <div className="lp-input-wrap">
-                    <span className="lp-input-icon">
-                      <Lock size={16} color={iconColor("password")} />
-                    </span>
-                    <input
-                      className={inputClass("password")}
-                      type={showPw ? "text" : "password"}
-                      placeholder="Min. 6 characters"
-                      value={form.password}
-                      onChange={onChange("password")}
-                      onFocus={onFocus("password")}
-                      onBlur={onBlur("password")}
-                      autoComplete="current-password"
-                    />
-                    {/* Status icon — between text and eye */}
-                    {touched.password && form.password && (
-                      <span style={{ position: "absolute", right: "42px", top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }}>
-                        {errors.password
-                          ? <AlertCircle size={15} color="#e0334c" />
-                          : <CheckCircle2 size={15} color="#22c55e" />}
-                      </span>
-                    )}
-                    <button
-                      type="button"
-                      className="lp-input-icon-right"
-                      onClick={() => setShowPw(v => !v)}
-                      tabIndex={-1}
-                    >
-                      {showPw ? <EyeOff size={16} /> : <Eye size={16} />}
-                    </button>
-                  </div>
-
-                  {/* Strength bar */}
-                  <div className={`lp-strength-wrap ${form.password ? "visible" : ""}`}>
-                    <div className="lp-strength-bar-bg">
-                      <div
-                        className="lp-strength-bar"
-                        style={{ width: `${strength.pct}%`, background: strength.color }}
-                      />
-                    </div>
-                    <span className="lp-strength-label" style={{ color: strength.color }}>
-                      {strength.label}
-                    </span>
-                  </div>
-
-                  <div className={`lp-error ${touched.password && errors.password ? "visible" : ""}`}>
-                    <AlertCircle size={12} />
-                    {errors.password}
-                  </div>
-                </div>
-
-                {/* Forgot */}
-                <div className="lp-forgot-row">
-                  <button type="button" className="lp-forgot">Forgot Password?</button>
-                </div>
-
-                {/* Submit */}
-                <button type="submit" className="lp-submit" disabled={loading}>
-                  {loading ? (
-                    <>
-                      <div className="lp-dots">
-                        <div className="lp-dot" />
-                        <div className="lp-dot" />
-                        <div className="lp-dot" />
-                      </div>
-                      Signing In…
-                    </>
-                  ) : (
-                    <>
-                      Sign In
-                      <ArrowRight size={16} />
-                    </>
                   )}
-                </button>
-              </form>
-            </div>
+                  <button
+                    type="button"
+                    className="lp-input-eye"
+                    onClick={() => setShowPw(v => !v)}
+                    tabIndex={-1}
+                  >
+                    {showPw ? <EyeOff size={15} /> : <Eye size={15} />}
+                  </button>
+                </div>
+
+                {/* Strength bar */}
+                <div className={`lp-strength ${form.password ? "visible" : ""}`}>
+                  <div className="lp-bar-bg">
+                    <div className="lp-bar" style={{ width: `${strength.pct}%`, background: strength.color }} />
+                  </div>
+                  <span className="lp-bar-label" style={{ color: strength.color }}>{strength.label}</span>
+                </div>
+
+                <div className={`lp-error ${touched.password && errors.password ? "visible" : ""}`}>
+                  <AlertCircle size={11} />
+                  {errors.password}
+                </div>
+              </div>
+
+              {/* Submit */}
+              <button type="submit" className="lp-submit" disabled={loading}>
+                {loading ? (
+                  <>
+                    <div className="lp-dots">
+                      <div className="lp-dot" />
+                      <div className="lp-dot" />
+                      <div className="lp-dot" />
+                    </div>
+                    Signing in…
+                  </>
+                ) : (
+                  <>
+                    Sign In
+                    <ArrowRight size={15} />
+                  </>
+                )}
+              </button>
+            </form>
 
             {/* Footer */}
             <div className="lp-footer">
               <div className="lp-ssl">
-                <ShieldCheck size={13} color="#22c55e" />
+                <ShieldCheck size={12} color="#22c55e" />
                 256-bit SSL Secured Connection
               </div>
-              <p className="lp-copy">
-                © {new Date().getFullYear()} Colan Infotech Pvt. Ltd. All rights reserved.
-              </p>
+              <p className="lp-copy">© {new Date().getFullYear()} Colan Infotech Pvt. Ltd. All rights reserved.</p>
             </div>
 
           </div>
+        </div>
+
+        {/* ════════ RIGHT — IMAGE AREA ════════ */}
+        <div className="lp-right">
+          <img src={mainimage} alt="" />
         </div>
 
       </div>
