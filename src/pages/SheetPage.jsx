@@ -219,13 +219,13 @@ function ModuleCard({ item, index, onClick }) {
       <div className="flex items-center justify-between px-6 py-3.5 border-t border-slate-100">
         <span
           className="text-[13.5px] font-semibold"
-          style={{ color: "#2563EB" }}
+          style={{ color: "#6099f7" }}
         >
           Open Module
         </span>
         <div
           className="w-7 h-7 rounded-lg flex items-center justify-center transition-all duration-200"
-          style={{ background: "#EFF6FF", color: "#2563EB" }}
+          style={{ background: "#EFF6FF", color: "#6099f7" }}
         >
           <ArrowRight
             size={14}
@@ -382,22 +382,30 @@ export default function SheetPage() {
       {/* HEADER // Hero section */}
 
       <div className="relative overflow-hidden bg-[#f8fbff] border-b border-[#e8eef7]">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_40%,rgba(37,99,235,0.12),transparent_35%)]" />
+        <div
+          className="absolute inset-0"
+          style={{
+            background: `
+      radial-gradient(circle at 82% 40%, rgba(59,130,246,0.18), transparent 30%),
+      radial-gradient(circle at 90% 60%, rgba(96,165,250,0.12), transparent 35%)
+    `,
+          }}
+        />
 
-        <div className="relative max-w-[1400px] mx-auto px-6 md:px-10 py-8">
+        <div className="relative max-w-[1400px] mx-auto px-6 md:px-10 py-2">
           <div className="flex items-center justify-between gap-8">
             {/* LEFT CONTENT */}
             <div className="z-10">
-              <p className="text-[11px] font-extrabold tracking-[0.08em] uppercase text-blue-500 mb-3">
+              <p className="text-[11px] font-extrabold tracking-[0.08em] uppercase text-blue-500 mb-2">
                 Employee Workspace
               </p>
 
-              <h1 className="text-[28px] md:text-[34px] font-extrabold text-[#111827] mb-4 leading-tight">
+              <h1 className="text-[28px] md:text-[34px] font-extrabold text-[#111827] mb-1 leading-tight">
                 Welcome back, {currentUser?.name || "Arjun Sharma"}
                 <span className="ml-2">👋</span>
               </h1>
 
-              <div className="flex flex-wrap items-center gap-3 mb-4">
+              <div className="flex flex-wrap items-center gap-3 mb-2">
                 <div className="flex items-center gap-2 text-[13px] font-medium text-slate-500">
                   <CalendarDays size={15} className="text-slate-400" />
                   <span>
@@ -438,11 +446,11 @@ export default function SheetPage() {
                 </div>
               </div>
 
-              <p className="text-[14px] font-medium text-slate-500 mb-5">
+              <p className="text-[14px] font-medium text-slate-500 mb-2">
                 Manage your daily operations from a centralized workspace.
               </p>
 
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50">
+              <div className="inline-flex items-center gap-2  py-2 rounded-full bg-emerald-100 px-2">
                 <span className="w-2 h-2 rounded-full bg-emerald-500" />
                 <span className="text-[12px] font-bold text-emerald-600">
                   Workspace Active
@@ -451,9 +459,9 @@ export default function SheetPage() {
             </div>
 
             {/* RIGHT GLOBE DESIGN */}
-            <div className="hidden md:block absolute right-0 top-0 w-[58%] h-full pointer-events-none">
+            <div className="hidden md:block absolute right-0 top-0 w-[50%] h-full pointer-events-none">
               <svg
-                viewBox="0 0 700 220"
+                viewBox="0 0 1100 220"
                 className="w-full h-full"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -472,28 +480,116 @@ export default function SheetPage() {
                   </linearGradient>
                 </defs>
 
-                {/* bottom flowing waves */}
+                {/* premium mesh waves */}
 
-                {Array.from({ length: 12 }).map((_, i) => (
+                {Array.from({ length: 55 }).map((_, i) => (
                   <path
-                    key={`wave-${i}`}
-                    d={`M0 ${170 + i * 4} C140 ${110 + i * 2}, 250 ${
-                      230 - i * 3
-                    }, 370 ${160 + i} C470 ${115 + i}, 560 ${145 + i}, 700 ${
-                      90 + i * 2
-                    }`}
-                    stroke="url(#waveBlue)"
-                    strokeWidth="0.8"
-                    opacity="0.35"
+                    key={i}
+                    d={`
+      M0 ${240 + i}
+      C180 ${180 - i},
+      380 ${300 - i},
+      560 ${210 + i * 0.2}
+      C720 ${120 - i},
+      900 ${260 + i},
+      1100 ${180 + i * 0.2}
+    `}
+                    fill="none"
+                    stroke="#60A5FA"
+                    strokeWidth="0.45"
+                    opacity={0.09 - i * 0.001}
                   />
                 ))}
 
-                {/* globe glow */}
-                <circle cx="520" cy="95" r="105" fill="url(#globeGlow)" />
+                <path
+                  d="
+    M0 240
+    C250 150,
+    500 280,
+    700 190
+    C850 110,
+    980 250,
+    1100 170
+  "
+                  fill="none"
+                  stroke="#3B82F6"
+                  strokeWidth="2"
+                  opacity="0.6"
+                />
 
+                <path
+                  d="
+    M0 255
+    C250 180,
+    500 310,
+    720 210
+    C850 140,
+    980 280,
+    1100 210
+  "
+                  fill="none"
+                  stroke="#93C5FD"
+                  strokeWidth="1.2"
+                  opacity="0.45"
+                />
+
+                {/* primary highlight wave */}
+
+                <path
+                  d="
+    M280 205
+    C380 150,
+    500 235,
+    590 175
+    C690 115,
+    790 185,
+    900 145
+  "
+                  fill="none"
+                  stroke="#3B82F6"
+                  strokeWidth="1.8"
+                  opacity="0.65"
+                />
+
+                <path
+                  d="
+    M260 220
+    C360 165,
+    500 250,
+    600 190
+    C700 135,
+    800 195,
+    900 165
+  "
+                  fill="none"
+                  stroke="#93C5FD"
+                  strokeWidth="1"
+                  opacity="0.35"
+                />
+
+                {/* outer orbit rings */}
+
+                <circle
+                  cx="680"
+                  r="118"
+                  stroke="#60A5FA"
+                  strokeWidth="1"
+                  strokeDasharray="4 4"
+                  opacity="0.16"
+                />
+
+                <circle
+                  cx="680"
+                  cy="95"
+                  r="132"
+                  stroke="#60A5FA"
+                  strokeWidth="1"
+                  strokeDasharray="3 6"
+                  opacity="0.12"
+                />
                 {/* globe outer lines */}
                 <circle
-                  cx="520"
+                  cx="680"
                   cy="95"
                   r="92"
                   stroke="#93C5FD"
@@ -501,7 +597,7 @@ export default function SheetPage() {
                   opacity="0.45"
                 />
                 <circle
-                  cx="520"
+                  cx="680"
                   cy="95"
                   r="78"
                   stroke="#93C5FD"
@@ -509,7 +605,7 @@ export default function SheetPage() {
                   opacity="0.35"
                 />
                 <ellipse
-                  cx="520"
+                  cx="680"
                   cy="95"
                   rx="92"
                   ry="32"
@@ -518,7 +614,7 @@ export default function SheetPage() {
                   opacity="0.35"
                 />
                 <ellipse
-                  cx="520"
+                  cx="680"
                   cy="95"
                   rx="92"
                   ry="58"
@@ -527,7 +623,7 @@ export default function SheetPage() {
                   opacity="0.3"
                 />
                 <ellipse
-                  cx="520"
+                  cx="680"
                   cy="95"
                   rx="34"
                   ry="92"
@@ -536,7 +632,7 @@ export default function SheetPage() {
                   opacity="0.3"
                 />
                 <ellipse
-                  cx="520"
+                  cx="680"
                   cy="95"
                   rx="62"
                   ry="92"
@@ -547,86 +643,77 @@ export default function SheetPage() {
 
                 {/* network lines */}
 
-                {[
-                  [450, 55, 500, 38],
+                {/* network lines */}
 
-                  [500, 38, 555, 40],
-
-                  [555, 40, 598, 78],
-
-                  [598, 78, 575, 125],
-
-                  [575, 125, 520, 150],
-
-                  [520, 150, 465, 120],
-
-                  [465, 120, 450, 55],
-
-                  [450, 55, 540, 92],
-
-                  [500, 38, 575, 125],
-
-                  [465, 120, 555, 40],
-
-                  [520, 150, 598, 78],
-
-                  [500, 38, 520, 150],
-
-                  [540, 92, 598, 78],
-
-                  [540, 92, 465, 120],
-
-                  [540, 92, 555, 40],
-                ].map(([x1, y1, x2, y2], i) => (
-                  <line
-                    key={i}
-                    x1={x1}
-                    y1={y1}
-                    x2={x2}
-                    y2={y2}
-                    stroke="#3B82F6"
-                    strokeWidth="1"
-                    opacity="0.35"
-                  />
-                ))}
+                <g transform="translate(180 0)">
+                  {[
+                    [450, 55, 500, 38],
+                    [500, 38, 555, 40],
+                    [555, 40, 598, 78],
+                    [598, 78, 575, 125],
+                    [575, 125, 520, 150],
+                    [520, 150, 465, 120],
+                    [465, 120, 450, 55],
+                    [450, 55, 540, 92],
+                    [500, 38, 575, 125],
+                    [465, 120, 555, 40],
+                    [520, 150, 598, 78],
+                    [500, 38, 520, 150],
+                    [540, 92, 598, 78],
+                    [540, 92, 465, 120],
+                    [540, 92, 555, 40],
+                  ].map(([x1, y1, x2, y2], i) => (
+                    <line
+                      key={i}
+                      x1={x1}
+                      y1={y1}
+                      x2={x2}
+                      y2={y2}
+                      stroke="#3B82F6"
+                      strokeWidth="1"
+                      opacity="0.35"
+                    />
+                  ))}
+                </g>
 
                 {/* nodes */}
 
-                {[
-                  [450, 55, 3],
+                {/* nodes */}
 
-                  [500, 38, 3],
+                <g transform="translate(180 0)">
+                  {[
+                    [450, 55, 3],
+                    [500, 38, 3],
+                    [555, 40, 4],
+                    [598, 78, 5],
+                    [575, 125, 5],
+                    [520, 150, 5],
+                    [465, 120, 4],
+                    [540, 92, 6],
+                    [610, 130, 3],
+                    [430, 95, 3],
+                  ].map(([cx, cy, r], i) => (
+                    <circle
+                      key={i}
+                      cx={cx}
+                      cy={cy}
+                      r={r}
+                      fill="#3B82F6"
+                      opacity="0.75"
+                    />
+                  ))}
+                </g>
+                {/* floating particles */}
 
-                  [555, 40, 4],
-
-                  [598, 78, 5],
-
-                  [575, 125, 5],
-
-                  [520, 150, 5],
-
-                  [465, 120, 4],
-
-                  [540, 92, 6],
-
-                  [610, 130, 3],
-
-                  [430, 95, 3],
-                ].map(([cx, cy, r], i) => (
-                  <circle
-                    key={i}
-                    cx={cx}
-                    cy={cy}
-                    r={r}
-                    fill="#3B82F6"
-                    opacity="0.75"
-                  />
-                ))}
-
-                {/* floating dots */}
                 <circle cx="350" cy="45" r="5" fill="#60A5FA" opacity="0.45" />
                 <circle cx="390" cy="78" r="4" fill="#3B82F6" opacity="0.45" />
                 <circle cx="320" cy="135" r="5" fill="#60A5FA" opacity="0.45" />
+
+                <circle cx="300" cy="40" r="7" fill="#60A5FA" opacity="0.15" />
+                <circle cx="280" cy="90" r="4" fill="#3B82F6" opacity="0.25" />
+                <circle cx="620" cy="25" r="5" fill="#60A5FA" opacity="0.25" />
+                <circle cx="660" cy="55" r="3" fill="#3B82F6" opacity="0.3" />
+
                 <circle
                   cx="250"
                   cy="125"
@@ -634,6 +721,7 @@ export default function SheetPage() {
                   stroke="#60A5FA"
                   opacity="0.35"
                 />
+
                 <circle
                   cx="640"
                   cy="65"
@@ -641,7 +729,59 @@ export default function SheetPage() {
                   stroke="#3B82F6"
                   opacity="0.35"
                 />
+
+                <circle
+                  cx="700"
+                  cy="140"
+                  r="8"
+                  stroke="#60A5FA"
+                  opacity="0.18"
+                />
+
                 <circle cx="665" cy="155" r="5" fill="#3B82F6" opacity="0.4" />
+
+                {/* wave network nodes */}
+
+                {[
+                  [470, 165],
+                  [510, 150],
+                  [550, 175],
+                  [590, 155],
+                  [640, 140],
+                  [680, 125],
+                ].map(([cx, cy], i) => (
+                  <circle
+                    key={i}
+                    cx={cx}
+                    cy={cy}
+                    r="3"
+                    fill="#3B82F6"
+                    opacity="0.75"
+                  />
+                ))}
+
+                {/* tiny wave particles */}
+
+                {[
+                  [420, 170],
+                  [450, 180],
+                  [500, 160],
+                  [540, 145],
+                  [580, 150],
+                  [620, 140],
+                  [670, 130],
+                  [710, 120],
+                  [760, 135],
+                ].map(([cx, cy], i) => (
+                  <circle
+                    key={i}
+                    cx={cx}
+                    cy={cy}
+                    r="2"
+                    fill="#3B82F6"
+                    opacity="0.5"
+                  />
+                ))}
               </svg>
             </div>
           </div>
@@ -649,7 +789,7 @@ export default function SheetPage() {
       </div>
 
       {/* ══════════ MODULES GRID ══════════ */}
-      <main className="mx-auto max-w-[1400px] px-6 md:px-10 py-8 pb-16">
+      <main className="mx-auto max-w-[1400px] px-6 md:px-10 py-4 ">
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {modules.map((item, index) => (
             <ModuleCard
