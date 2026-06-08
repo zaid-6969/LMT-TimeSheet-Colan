@@ -380,15 +380,14 @@ export default function SheetPage() {
       </header>
 
       {/* HEADER // Hero section */}
-
       <div className="relative overflow-hidden bg-[#f8fbff] border-b border-[#e8eef7]">
         <div
           className="absolute inset-0"
           style={{
             background: `
-      radial-gradient(circle at 82% 40%, rgba(59,130,246,0.18), transparent 30%),
-      radial-gradient(circle at 90% 60%, rgba(96,165,250,0.12), transparent 35%)
-    `,
+              radial-gradient(circle at 82% 40%, rgba(59,130,246,0.18), transparent 30%),
+              radial-gradient(circle at 90% 60%, rgba(96,165,250,0.12), transparent 35%)
+            `,
           }}
         />
 
@@ -412,11 +411,8 @@ export default function SheetPage() {
                     {currentTime
                       ? currentTime.toLocaleDateString("en-IN", {
                           weekday: "long",
-
                           day: "2-digit",
-
                           month: "long",
-
                           year: "numeric",
                         })
                       : "Wednesday, 04 June 2026"}
@@ -431,7 +427,6 @@ export default function SheetPage() {
                     {currentTime
                       ? currentTime.toLocaleTimeString("en-IN", {
                           hour: "2-digit",
-
                           minute: "2-digit",
                         })
                       : "11:45 AM IST"}
@@ -450,7 +445,7 @@ export default function SheetPage() {
                 Manage your daily operations from a centralized workspace.
               </p>
 
-              <div className="inline-flex items-center gap-2  py-2 rounded-full bg-emerald-100 px-2">
+              <div className="inline-flex items-center gap-2 py-2 rounded-full bg-emerald-100 px-2">
                 <span className="w-2 h-2 rounded-full bg-emerald-500" />
                 <span className="text-[12px] font-bold text-emerald-600">
                   Workspace Active
@@ -458,8 +453,8 @@ export default function SheetPage() {
               </div>
             </div>
 
-            {/* RIGHT GLOBE DESIGN */}
-            <div className="hidden md:block absolute right-0 top-0 w-[50%] h-full pointer-events-none">
+            {/* RIGHT GLOBE DESIGN (RECALIBRATED & FIXED ACCURACY) */}
+            <div className="hidden md:block absolute right-[-40px] top-0 w-[58%] h-full pointer-events-none overflow-hidden">
               <svg
                 viewBox="0 0 1100 220"
                 className="w-full h-full"
@@ -472,28 +467,21 @@ export default function SheetPage() {
                     <stop offset="70%" stopColor="#3B82F6" stopOpacity="0.08" />
                     <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
                   </radialGradient>
-
-                  <linearGradient id="waveBlue" x1="0" y1="0" x2="700" y2="0">
-                    <stop stopColor="#60A5FA" stopOpacity="0" />
-                    <stop offset="0.5" stopColor="#3B82F6" stopOpacity="0.22" />
-                    <stop offset="1" stopColor="#60A5FA" stopOpacity="0" />
-                  </linearGradient>
                 </defs>
 
-                {/* premium mesh waves */}
-
+                {/* Premium mesh background waves */}
                 {Array.from({ length: 55 }).map((_, i) => (
                   <path
                     key={i}
                     d={`
-      M0 ${240 + i}
-      C180 ${180 - i},
-      380 ${300 - i},
-      560 ${210 + i * 0.2}
-      C720 ${120 - i},
-      900 ${260 + i},
-      1100 ${180 + i * 0.2}
-    `}
+                      M0 ${240 + i}
+                      C180 ${180 - i},
+                      380 ${300 - i},
+                      560 ${210 + i * 0.2}
+                      C720 ${120 - i},
+                      900 ${260 + i},
+                      1100 ${180 + i * 0.2}
+                    `}
                     fill="none"
                     stroke="#60A5FA"
                     strokeWidth="0.45"
@@ -502,15 +490,7 @@ export default function SheetPage() {
                 ))}
 
                 <path
-                  d="
-    M0 240
-    C250 150,
-    500 280,
-    700 190
-    C850 110,
-    980 250,
-    1100 170
-  "
+                  d="M0 240 C250 150, 500 280, 700 190 C850 110, 980 250, 1100 170"
                   fill="none"
                   stroke="#3B82F6"
                   strokeWidth="2"
@@ -518,33 +498,16 @@ export default function SheetPage() {
                 />
 
                 <path
-                  d="
-    M0 255
-    C250 180,
-    500 310,
-    720 210
-    C850 140,
-    980 280,
-    1100 210
-  "
+                  d="M0 255 C250 180, 500 310, 720 210 C850 140, 980 280, 1100 210"
                   fill="none"
                   stroke="#93C5FD"
                   strokeWidth="1.2"
                   opacity="0.45"
                 />
 
-                {/* primary highlight wave */}
-
+                {/* Primary highlight waves */}
                 <path
-                  d="
-    M280 205
-    C380 150,
-    500 235,
-    590 175
-    C690 115,
-    790 185,
-    900 145
-  "
+                  d="M280 205 C380 150, 500 235, 590 175 C690 115, 790 185, 900 145"
                   fill="none"
                   stroke="#3B82F6"
                   strokeWidth="1.8"
@@ -552,116 +515,105 @@ export default function SheetPage() {
                 />
 
                 <path
-                  d="
-    M260 220
-    C360 165,
-    500 250,
-    600 190
-    C700 135,
-    800 195,
-    900 165
-  "
+                  d="M260 220 C360 165, 500 250, 600 190 C700 135, 800 195, 900 165"
                   fill="none"
                   stroke="#93C5FD"
                   strokeWidth="1"
                   opacity="0.35"
                 />
 
-                {/* outer orbit rings */}
-
+                {/* Outer Orbit Glow Base (Centered at 790, 90) */}
                 <circle
-                  cx="680"
-                  r="118"
+                  cx="790"
+                  cy="90"
+                  r="160"
+                  fill="url(#globeGlow)"
+                  opacity="0.9"
+                />
+
+                {/* Concentric Spherical Architecture (All aligned at 790, 90) */}
+                <circle
+                  cx="790"
+                  cy="90"
+                  r="132"
                   stroke="#60A5FA"
                   strokeWidth="1"
                   strokeDasharray="4 4"
                   opacity="0.16"
                 />
-
                 <circle
-                  cx="680"
-                  cy="95"
-                  r="132"
-                  stroke="#60A5FA"
-                  strokeWidth="1"
-                  strokeDasharray="3 6"
-                  opacity="0.12"
-                />
-                {/* globe outer lines */}
-                <circle
-                  cx="680"
-                  cy="95"
-                  r="92"
+                  cx="790"
+                  cy="90"
+                  r="118"
                   stroke="#93C5FD"
-                  strokeWidth="1"
+                  strokeWidth="1.2"
                   opacity="0.45"
                 />
                 <circle
-                  cx="680"
-                  cy="95"
-                  r="78"
+                  cx="790"
+                  cy="90"
+                  r="100"
+                  stroke="#93C5FD"
+                  strokeWidth="0.8"
+                  opacity="0.35"
+                />
+
+                {/* Longitudinal / Latitudinal Ellipses */}
+                <ellipse
+                  cx="790"
+                  cy="90"
+                  rx="118"
+                  ry="40"
                   stroke="#93C5FD"
                   strokeWidth="0.8"
                   opacity="0.35"
                 />
                 <ellipse
-                  cx="680"
-                  cy="95"
-                  rx="92"
-                  ry="32"
-                  stroke="#93C5FD"
-                  strokeWidth="0.8"
-                  opacity="0.35"
-                />
-                <ellipse
-                  cx="680"
-                  cy="95"
-                  rx="92"
-                  ry="58"
+                  cx="790"
+                  cy="90"
+                  rx="118"
+                  ry="72"
                   stroke="#93C5FD"
                   strokeWidth="0.8"
                   opacity="0.3"
                 />
                 <ellipse
-                  cx="680"
-                  cy="95"
-                  rx="34"
-                  ry="92"
+                  cx="790"
+                  cy="90"
+                  ry="118"
+                  rx="42"
                   stroke="#93C5FD"
                   strokeWidth="0.8"
                   opacity="0.3"
                 />
                 <ellipse
-                  cx="680"
-                  cy="95"
-                  rx="62"
-                  ry="92"
+                  cx="790"
+                  cy="90"
+                  ry="118"
+                  rx="75"
                   stroke="#93C5FD"
                   strokeWidth="0.8"
                   opacity="0.25"
                 />
 
-                {/* network lines */}
-
-                {/* network lines */}
-
-                <g transform="translate(180 0)">
+                {/* Perfectly Mapped Network Lines (Anchored relative to center) */}
+                <g>
                   {[
-                    [450, 55, 500, 38],
-                    [500, 38, 555, 40],
-                    [555, 40, 598, 78],
-                    [598, 78, 575, 125],
-                    [575, 125, 520, 150],
-                    [520, 150, 465, 120],
-                    [465, 120, 450, 55],
-                    [450, 55, 540, 92],
-                    [500, 38, 575, 125],
-                    [465, 120, 555, 40],
-                    [520, 150, 598, 78],
-                    [500, 38, 520, 150],
-                    [540, 92, 598, 78],
-                    [540, 92, 465, 120],
-                    [540, 92, 555, 40],
+                    [720, 60, 770, 40],
+                    [770, 40, 830, 42],
+                    [830, 42, 875, 80],
+                    [875, 80, 850, 130],
+                    [850, 130, 790, 155],
+                    [790, 155, 735, 125],
+                    [735, 125, 720, 60],
+                    [720, 60, 810, 95],
+                    [770, 40, 850, 130],
+                    [735, 125, 830, 42],
+                    [790, 155, 875, 80],
+                    [770, 40, 790, 155],
+                    [810, 95, 875, 80],
+                    [810, 95, 735, 125],
+                    [810, 95, 830, 42],
                   ].map(([x1, y1, x2, y2], i) => (
                     <line
                       key={i}
@@ -669,79 +621,53 @@ export default function SheetPage() {
                       y1={y1}
                       x2={x2}
                       y2={y2}
-                      stroke="#3B82F6"
-                      strokeWidth="1"
-                      opacity="0.35"
+                      stroke="#2563EB"
+                      strokeWidth="1.1"
+                      opacity="0.4"
                     />
                   ))}
                 </g>
 
-                {/* nodes */}
-
-                {/* nodes */}
-
-                <g transform="translate(180 0)">
+                {/* Perfectly Mapped Structural Nodes */}
+                <g>
                   {[
-                    [450, 55, 3],
-                    [500, 38, 3],
-                    [555, 40, 4],
-                    [598, 78, 5],
-                    [575, 125, 5],
-                    [520, 150, 5],
-                    [465, 120, 4],
-                    [540, 92, 6],
-                    [610, 130, 3],
-                    [430, 95, 3],
+                    [720, 60, 3.5],
+                    [770, 40, 3.5],
+                    [830, 42, 4.5],
+                    [875, 80, 5.5],
+                    [850, 130, 5.5],
+                    [790, 155, 5.5],
+                    [735, 125, 4.5],
+                    [810, 95, 6.5],
+                    [890, 135, 3.5],
+                    [700, 100, 3.5],
                   ].map(([cx, cy, r], i) => (
                     <circle
                       key={i}
                       cx={cx}
                       cy={cy}
                       r={r}
-                      fill="#3B82F6"
-                      opacity="0.75"
+                      fill="#2563EB"
+                      opacity="0.85"
                     />
                   ))}
                 </g>
-                {/* floating particles */}
 
-                <circle cx="350" cy="45" r="5" fill="#60A5FA" opacity="0.45" />
-                <circle cx="390" cy="78" r="4" fill="#3B82F6" opacity="0.45" />
-                <circle cx="320" cy="135" r="5" fill="#60A5FA" opacity="0.45" />
+                {/* Balanced Ambient Particles */}
+                <circle cx="620" cy="45" r="5" fill="#60A5FA" opacity="0.45" />
+                <circle cx="660" cy="78" r="4" fill="#3B82F6" opacity="0.45" />
+                <circle cx="590" cy="135" r="5" fill="#60A5FA" opacity="0.45" />
+                <circle cx="570" cy="40" r="7" fill="#60A5FA" opacity="0.15" />
+                <circle cx="550" cy="90" r="4" fill="#3B82F6" opacity="0.25" />
+                <circle cx="890" cy="25" r="5" fill="#60A5FA" opacity="0.25" />
+                <circle cx="930" cy="55" r="3" fill="#3B82F6" opacity="0.3" />
 
-                <circle cx="300" cy="40" r="7" fill="#60A5FA" opacity="0.15" />
-                <circle cx="280" cy="90" r="4" fill="#3B82F6" opacity="0.25" />
-                <circle cx="620" cy="25" r="5" fill="#60A5FA" opacity="0.25" />
-                <circle cx="660" cy="55" r="3" fill="#3B82F6" opacity="0.3" />
+                <circle cx="520" cy="125" r="7" stroke="#60A5FA" strokeWidth="1" opacity="0.35" />
+                <circle cx="910" cy="65" r="6" stroke="#3B82F6" strokeWidth="1" opacity="0.35" />
+                <circle cx="970" cy="140" r="8" stroke="#60A5FA" strokeWidth="1" opacity="0.18" />
+                <circle cx="935" cy="155" r="5" fill="#3B82F6" opacity="0.4" />
 
-                <circle
-                  cx="250"
-                  cy="125"
-                  r="7"
-                  stroke="#60A5FA"
-                  opacity="0.35"
-                />
-
-                <circle
-                  cx="640"
-                  cy="65"
-                  r="6"
-                  stroke="#3B82F6"
-                  opacity="0.35"
-                />
-
-                <circle
-                  cx="700"
-                  cy="140"
-                  r="8"
-                  stroke="#60A5FA"
-                  opacity="0.18"
-                />
-
-                <circle cx="665" cy="155" r="5" fill="#3B82F6" opacity="0.4" />
-
-                {/* wave network nodes */}
-
+                {/* Wave Network Interface Nodes */}
                 {[
                   [470, 165],
                   [510, 150],
@@ -760,8 +686,7 @@ export default function SheetPage() {
                   />
                 ))}
 
-                {/* tiny wave particles */}
-
+                {/* Tiny Floating Wave Sparks */}
                 {[
                   [420, 170],
                   [450, 180],
