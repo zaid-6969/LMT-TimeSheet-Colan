@@ -13,12 +13,6 @@ import {
   User,
   Settings,
   ChevronDown,
-  BriefcaseBusiness,
-  ListTodo,
-  TimerReset,
-  TrendingUp,
-  Search,
-  Command,
   LayoutDashboard,
   ListChecks,
   Settings2,
@@ -123,28 +117,6 @@ const modules = [
   },
 ];
 
-const stats = [
-  {
-    title: "Active Projects",
-    value: "12",
-    icon: BriefcaseBusiness,
-    color: "#2563EB",
-  },
-  { title: "Pending Tasks", value: "28", icon: ListTodo, color: "#D97706" },
-  {
-    title: "Hours This Week",
-    value: "36h 45m",
-    icon: TimerReset,
-    color: "#059669",
-  },
-  {
-    title: "Team Efficiency",
-    value: "92%",
-    icon: TrendingUp,
-    color: "#7C3AED",
-  },
-];
-
 const currentUser = {
   name: "Arjun Sharma",
   email: "arjun.sharma@gmail.com",
@@ -182,10 +154,8 @@ function ModuleCard({ item, index, onClick }) {
         e.currentTarget.style.borderColor = "rgba(226,232,240,0.8)";
       }}
     >
-      {/* Card body */}
       <div className="flex-1 p-4">
         <div className="flex gap-3">
-          {/* Icon */}
           <div
             className="w-12 h-12 rounded-xl flex items-center justify-center mb-5"
             style={{ background: item.iconBg }}
@@ -198,7 +168,6 @@ function ModuleCard({ item, index, onClick }) {
           </div>
 
           <div>
-            {/* Title + subtitle */}
             <h2
               className="text-[17px] font-semibold text-slate-900 mb-0.5"
               style={{ letterSpacing: "-0.01em" }}
@@ -215,7 +184,6 @@ function ModuleCard({ item, index, onClick }) {
         </p>
       </div>
 
-      {/* Footer */}
       <div className="flex items-center justify-between px-6 py-3.5 border-t border-slate-100">
         <span
           className="text-[13.5px] font-semibold"
@@ -280,22 +248,18 @@ export default function SheetPage() {
         style={{ borderBottom: "1px solid #E9EEF4" }}
       >
         <div className="mx-auto flex h-[68px] max-w-[1400px] items-center justify-between px-6 md:px-10">
-          {/* Logo */}
           <img
             src={image1}
             alt="Colan Infotech"
             className="h-9 object-contain"
           />
 
-          {/* Right */}
           <div className="flex items-center gap-3">
-            {/* Notification */}
             <button className="relative w-10 h-10 flex items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 hover:text-blue-600 hover:border-blue-200 hover:bg-blue-50 transition-all duration-200">
               <Bell size={17} strokeWidth={1.8} />
               <span className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-rose-500 ring-2 ring-white" />
             </button>
 
-            {/* User */}
             <div ref={userRef} className="relative">
               <button
                 onClick={() => setUserMenuOpen(!userMenuOpen)}
@@ -323,7 +287,6 @@ export default function SheetPage() {
                 />
               </button>
 
-              {/* Dropdown */}
               {userMenuOpen && (
                 <motion.div
                   initial={{ opacity: 0, y: 6, scale: 0.97 }}
@@ -385,16 +348,16 @@ export default function SheetPage() {
           className="absolute inset-0"
           style={{
             background: `
-              radial-gradient(circle at 82% 40%, rgba(59,130,246,0.18), transparent 30%),
-              radial-gradient(circle at 90% 60%, rgba(96,165,250,0.12), transparent 35%)
+              radial-gradient(circle at 75% 50%, rgba(59,130,246,0.18), transparent 45%),
+              radial-gradient(circle at 82% 50%, rgba(96,165,250,0.1), transparent 50%)
             `,
           }}
         />
 
-        <div className="relative max-w-[1400px] mx-auto px-6 md:px-10 py-2">
-          <div className="flex items-center justify-between gap-8">
+        <div className="relative max-w-[1400px] mx-auto px-6 md:px-10 py-5">
+          <div className="flex items-center justify-between gap-4">
             {/* LEFT CONTENT */}
-            <div className="z-10">
+            <div className="z-10 max-w-[50%] shrink-0">
               <p className="text-[11px] font-extrabold tracking-[0.08em] uppercase text-blue-500 mb-2">
                 Employee Workspace
               </p>
@@ -453,167 +416,90 @@ export default function SheetPage() {
               </div>
             </div>
 
-            {/* RIGHT GLOBE DESIGN (RECALIBRATED & FIXED ACCURACY) */}
-            <div className="hidden md:block absolute right-[-40px] top-0 w-[58%] h-full pointer-events-none overflow-hidden">
+            {/* RIGHT GLOBE DESIGN - EXPANDED SIZE AND FULL OVERLAPPING MOIRE BOTTOM WAVES */}
+            <div className="hidden md:block absolute right-[-80px] top-[-10px] w-[58%] h-[110%] pointer-events-none overflow-hidden">
               <svg
-                viewBox="0 0 1100 220"
+                viewBox="0 0 1000 240"
                 className="w-full h-full"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
               >
                 <defs>
                   <radialGradient id="globeGlow" cx="50%" cy="50%" r="50%">
-                    <stop offset="0%" stopColor="#60A5FA" stopOpacity="0.28" />
-                    <stop offset="70%" stopColor="#3B82F6" stopOpacity="0.08" />
+                    <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.28" />
+                    <stop offset="60%" stopColor="#60A5FA" stopOpacity="0.12" />
                     <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
                   </radialGradient>
                 </defs>
 
-                {/* Premium mesh background waves */}
-                {Array.from({ length: 55 }).map((_, i) => (
+                {/* 🌊 DENSE HIGH-FREQUENCY BOTTOM MOIRE WAVE SYSTEM (80 overlapping lines) */}
+                {Array.from({ length: 80 }).map((_, i) => (
                   <path
                     key={i}
-                    d={`
-                      M0 ${240 + i}
-                      C180 ${180 - i},
-                      380 ${300 - i},
-                      560 ${210 + i * 0.2}
-                      C720 ${120 - i},
-                      900 ${260 + i},
-                      1100 ${180 + i * 0.2}
-                    `}
+                    d={`M -50 ${245 + i * 0.4} C 150 ${195 - i * 0.9}, 380 ${290 - i * 0.5}, 680 ${180 + i * 0.15} C 780 ${125 - i * 0.2}, 920 ${265 + i * 0.4}, 1100 ${145 + i * 0.8}`}
                     fill="none"
-                    stroke="#60A5FA"
-                    strokeWidth="0.45"
-                    opacity={0.09 - i * 0.001}
+                    stroke="#2563EB"
+                    strokeWidth="0.4"
+                    opacity={0.14 - i * 0.0016}
                   />
                 ))}
 
+                {/* Main Darker Primary Accent Waves */}
                 <path
-                  d="M0 240 C250 150, 500 280, 700 190 C850 110, 980 250, 1100 170"
+                  d="M-20 250 C 170 170, 390 295, 690 185 C 790 130, 930 255, 1080 155"
+                  fill="none"
+                  stroke="#1D4ED8"
+                  strokeWidth="1.5"
+                  opacity="0.38"
+                />
+                <path
+                  d="M 10 258 C 190 180, 410 305, 705 192 C 805 138, 945 262, 1095 162"
                   fill="none"
                   stroke="#3B82F6"
-                  strokeWidth="2"
-                  opacity="0.6"
+                  strokeWidth="1.0"
+                  opacity="0.28"
                 />
 
-                <path
-                  d="M0 255 C250 180, 500 310, 720 210 C850 140, 980 280, 1100 210"
-                  fill="none"
-                  stroke="#93C5FD"
-                  strokeWidth="1.2"
-                  opacity="0.45"
-                />
-
-                {/* Primary highlight waves */}
-                <path
-                  d="M280 205 C380 150, 500 235, 590 175 C690 115, 790 185, 900 145"
-                  fill="none"
-                  stroke="#3B82F6"
-                  strokeWidth="1.8"
-                  opacity="0.65"
-                />
-
-                <path
-                  d="M260 220 C360 165, 500 250, 600 190 C700 135, 800 195, 900 165"
-                  fill="none"
-                  stroke="#93C5FD"
-                  strokeWidth="1"
-                  opacity="0.35"
-                />
-
-                {/* Outer Orbit Glow Base (Centered at 790, 90) */}
+                {/* Centralized Core Light Glow Field */}
                 <circle
-                  cx="790"
-                  cy="90"
-                  r="160"
+                  cx="740"
+                  cy="115"
+                  r="140"
                   fill="url(#globeGlow)"
-                  opacity="0.9"
+                  opacity="0.95"
                 />
 
-                {/* Concentric Spherical Architecture (All aligned at 790, 90) */}
-                <circle
-                  cx="790"
-                  cy="90"
-                  r="132"
-                  stroke="#60A5FA"
-                  strokeWidth="1"
-                  strokeDasharray="4 4"
-                  opacity="0.16"
-                />
-                <circle
-                  cx="790"
-                  cy="90"
-                  r="118"
-                  stroke="#93C5FD"
-                  strokeWidth="1.2"
-                  opacity="0.45"
-                />
-                <circle
-                  cx="790"
-                  cy="90"
-                  r="100"
-                  stroke="#93C5FD"
-                  strokeWidth="0.8"
-                  opacity="0.35"
-                />
+                {/* 🌐 THE GIANT SPHERICAL NETWORKING GLOBE FRAMEWORK */}
+                {/* Perfect circular outermost outline orbits */}
+                <circle cx="740" cy="115" r="114" stroke="#2563EB" strokeWidth="0.85" strokeDasharray="3 3" opacity="0.4" />
+                <circle cx="740" cy="115" r="104" stroke="#60A5FA" strokeWidth="1.3" strokeDasharray="8 6" opacity="0.35" />
+                <circle cx="740" cy="115" r="92" stroke="#3B82F6" strokeWidth="0.6" opacity="0.25" />
 
-                {/* Longitudinal / Latitudinal Ellipses */}
-                <ellipse
-                  cx="790"
-                  cy="90"
-                  rx="118"
-                  ry="40"
-                  stroke="#93C5FD"
-                  strokeWidth="0.8"
-                  opacity="0.35"
-                />
-                <ellipse
-                  cx="790"
-                  cy="90"
-                  rx="118"
-                  ry="72"
-                  stroke="#93C5FD"
-                  strokeWidth="0.8"
-                  opacity="0.3"
-                />
-                <ellipse
-                  cx="790"
-                  cy="90"
-                  ry="118"
-                  rx="42"
-                  stroke="#93C5FD"
-                  strokeWidth="0.8"
-                  opacity="0.3"
-                />
-                <ellipse
-                  cx="790"
-                  cy="90"
-                  ry="118"
-                  rx="75"
-                  stroke="#93C5FD"
-                  strokeWidth="0.8"
-                  opacity="0.25"
-                />
+                {/* Horizontal Latitudinal Perspective Ellipses */}
+                <ellipse cx="740" cy="115" rx="104" ry="16" stroke="#3B82F6" strokeWidth="0.7" opacity="0.35" />
+                <ellipse cx="740" cy="115" rx="104" ry="38" stroke="#3B82F6" strokeWidth="0.75" opacity="0.4" />
+                <ellipse cx="740" cy="115" rx="104" ry="60" stroke="#3B82F6" strokeWidth="0.7" opacity="0.35" />
+                <ellipse cx="740" cy="115" rx="104" ry="82" stroke="#3B82F6" strokeWidth="0.5" opacity="0.25" />
 
-                {/* Perfectly Mapped Network Lines (Anchored relative to center) */}
+                {/* Vertical Longitudinal Perspective Ellipses */}
+                <ellipse cx="740" cy="115" rx="18" ry="104" stroke="#3B82F6" strokeWidth="0.7" opacity="0.35" />
+                <ellipse cx="740" cy="115" rx="42" ry="104" stroke="#3B82F6" strokeWidth="0.75" opacity="0.4" />
+                <ellipse cx="740" cy="115" rx="68" ry="104" stroke="#3B82F6" strokeWidth="0.7" opacity="0.35" />
+                <ellipse cx="740" cy="115" rx="88" ry="104" stroke="#3B82F6" strokeWidth="0.5" opacity="0.25" />
+
+                {/* 🕸️ Highly Intricate Interconnected Core Node Vectors */}
                 <g>
                   {[
-                    [720, 60, 770, 40],
-                    [770, 40, 830, 42],
-                    [830, 42, 875, 80],
-                    [875, 80, 850, 130],
-                    [850, 130, 790, 155],
-                    [790, 155, 735, 125],
-                    [735, 125, 720, 60],
-                    [720, 60, 810, 95],
-                    [770, 40, 850, 130],
-                    [735, 125, 830, 42],
-                    [790, 155, 875, 80],
-                    [770, 40, 790, 155],
-                    [810, 95, 875, 80],
-                    [810, 95, 735, 125],
-                    [810, 95, 830, 42],
+                    [660, 85, 710, 52], [710, 52, 775, 56], [775, 56, 820, 95],
+                    [820, 95, 808, 155], [808, 155, 750, 175], [750, 175, 684, 150],
+                    [684, 150, 660, 85], [660, 85, 745, 118], [710, 52, 808, 155],
+                    [684, 150, 775, 56], [750, 175, 820, 95], [710, 52, 750, 175],
+                    [745, 118, 820, 95], [745, 118, 684, 150], [745, 118, 775, 56],
+                    [660, 85, 700, 140], [700, 140, 750, 175], [775, 56, 788, 128],
+                    [788, 128, 808, 155], [684, 150, 728, 72], [728, 72, 710, 52],
+                    [660, 85, 775, 56], [710, 52, 820, 95], [820, 95, 750, 175],
+                    [808, 155, 684, 150], [684, 150, 775, 56], [710, 52, 808, 155],
+                    [660, 85, 750, 175], [710, 52, 745, 118], [775, 56, 745, 118]
                   ].map(([x1, y1, x2, y2], i) => (
                     <line
                       key={i}
@@ -621,90 +507,58 @@ export default function SheetPage() {
                       y1={y1}
                       x2={x2}
                       y2={y2}
-                      stroke="#2563EB"
-                      strokeWidth="1.1"
-                      opacity="0.4"
+                      stroke={i % 3 === 0 ? "#60A5FA" : "#2563EB"}
+                      strokeWidth="0.95"
+                      opacity={i % 2 === 0 ? "0.5" : "0.3"}
                     />
                   ))}
                 </g>
 
-                {/* Perfectly Mapped Structural Nodes */}
+                {/* Bright Structural Mesh Point Intersections */}
                 <g>
                   {[
-                    [720, 60, 3.5],
-                    [770, 40, 3.5],
-                    [830, 42, 4.5],
-                    [875, 80, 5.5],
-                    [850, 130, 5.5],
-                    [790, 155, 5.5],
-                    [735, 125, 4.5],
-                    [810, 95, 6.5],
-                    [890, 135, 3.5],
-                    [700, 100, 3.5],
+                    [660, 85, 3.5], [710, 52, 4.0], [775, 56, 4.5], [820, 95, 5.5],
+                    [808, 155, 4.5], [750, 175, 5.2], [684, 150, 4.0], [745, 118, 6.5],
+                    [700, 140, 3.5], [788, 128, 4.0], [728, 72, 3.0], [838, 132, 3.5],
+                    [638, 112, 3.0], [760, 82, 3.0], [722, 160, 3.5]
                   ].map(([cx, cy, r], i) => (
                     <circle
                       key={i}
                       cx={cx}
                       cy={cy}
                       r={r}
-                      fill="#2563EB"
-                      opacity="0.85"
+                      fill={i === 7 ? "#3B82F6" : "#2563EB"}
+                      opacity="0.9"
                     />
                   ))}
                 </g>
 
-                {/* Balanced Ambient Particles */}
-                <circle cx="620" cy="45" r="5" fill="#60A5FA" opacity="0.45" />
-                <circle cx="660" cy="78" r="4" fill="#3B82F6" opacity="0.45" />
-                <circle cx="590" cy="135" r="5" fill="#60A5FA" opacity="0.45" />
-                <circle cx="570" cy="40" r="7" fill="#60A5FA" opacity="0.15" />
-                <circle cx="550" cy="90" r="4" fill="#3B82F6" opacity="0.25" />
-                <circle cx="890" cy="25" r="5" fill="#60A5FA" opacity="0.25" />
-                <circle cx="930" cy="55" r="3" fill="#3B82F6" opacity="0.3" />
+                {/* ✨ Scattered Ambient Particles & Light Flares */}
+                <circle cx="570" cy="65" r="4.5" fill="#60A5FA" opacity="0.45" />
+                <circle cx="612" cy="98" r="3.5" fill="#3B82F6" opacity="0.5" />
+                <circle cx="550" cy="158" r="4.0" fill="#60A5FA" opacity="0.4" />
+                <circle cx="520" cy="58" r="6.0" fill="#60A5FA" opacity="0.14" />
+                <circle cx="480" cy="115" r="3.5" fill="#3B82F6" opacity="0.25" />
+                <circle cx="875" cy="50" r="4.5" fill="#60A5FA" opacity="0.35" />
+                <circle cx="912" cy="82" r="3.0" fill="#3B82F6" opacity="0.4" />
 
-                <circle cx="520" cy="125" r="7" stroke="#60A5FA" strokeWidth="1" opacity="0.35" />
-                <circle cx="910" cy="65" r="6" stroke="#3B82F6" strokeWidth="1" opacity="0.35" />
-                <circle cx="970" cy="140" r="8" stroke="#60A5FA" strokeWidth="1" opacity="0.18" />
-                <circle cx="935" cy="155" r="5" fill="#3B82F6" opacity="0.4" />
+                <circle cx="460" cy="148" r="6" stroke="#60A5FA" strokeWidth="0.8" opacity="0.3" />
+                <circle cx="890" cy="95" r="5" stroke="#3B82F6" strokeWidth="0.8" opacity="0.35" />
+                <circle cx="955" cy="165" r="7" stroke="#60A5FA" strokeWidth="0.8" opacity="0.18" />
+                <circle cx="922" cy="182" r="4.5" fill="#3B82F6" opacity="0.4" />
 
-                {/* Wave Network Interface Nodes */}
+                {/* Wave-to-Globe Joining Points */}
                 {[
-                  [470, 165],
-                  [510, 150],
-                  [550, 175],
-                  [590, 155],
-                  [640, 140],
-                  [680, 125],
+                  [380, 198], [430, 182], [480, 208],
+                  [530, 186], [585, 167], [635, 149]
                 ].map(([cx, cy], i) => (
                   <circle
                     key={i}
                     cx={cx}
                     cy={cy}
-                    r="3"
+                    r="2.5"
                     fill="#3B82F6"
-                    opacity="0.75"
-                  />
-                ))}
-
-                {/* Tiny Floating Wave Sparks */}
-                {[
-                  [420, 170],
-                  [450, 180],
-                  [500, 160],
-                  [540, 145],
-                  [580, 150],
-                  [620, 140],
-                  [670, 130],
-                  [710, 120],
-                  [760, 135],
-                ].map(([cx, cy], i) => (
-                  <circle
-                    key={i}
-                    cx={cx}
-                    cy={cy}
-                    r="2"
-                    fill="#3B82F6"
-                    opacity="0.5"
+                    opacity="0.8"
                   />
                 ))}
               </svg>
