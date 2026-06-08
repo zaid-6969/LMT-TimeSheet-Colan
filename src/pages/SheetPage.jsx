@@ -26,24 +26,14 @@ import Footer from "../components/Footer";
 /* ── Data (unchanged) ──────────────────────────── */
 const modules = [
   {
-    title: "Final Source",
-    subtitle: "Source & Delivery Hub",
+    title: "Dashboard",
+    subtitle: "Business Overview",
     description:
-      "Centralize, manage and track all finalized project sources and delivery files efficiently.",
-    icon: Database,
-    route: "/final-source/list",
-    iconBg: "#EEF2FF",
-    iconColor: "#4F46E5",
-  },
-  {
-    title: "Projects",
-    subtitle: "Project Management",
-    description:
-      "Monitor ongoing projects, manage workflows and collaborate with teams in one workspace.",
-    icon: FolderKanban,
-    route: "/projects",
-    iconBg: "#ECFDF5",
-    iconColor: "#059669",
+      "Access key metrics, project insights and operational analytics from a centralized dashboard.",
+    icon: LayoutDashboard,
+    route: "/dashboard",
+    iconBg: "#EFF6FF",
+    iconColor: "#2563EB",
   },
   {
     title: "Tasks",
@@ -56,14 +46,14 @@ const modules = [
     iconColor: "#D97706",
   },
   {
-    title: "Timesheet",
-    subtitle: "Work Hour Management",
+    title: "To Do",
+    subtitle: "Personal Task Board",
     description:
-      "Log working hours, manage employee timesheets and track productivity effectively.",
-    icon: Clock3,
-    route: "/timesheet/view",
-    iconBg: "#F0F9FF",
-    iconColor: "#0284C7",
+      "Organize daily priorities, track pending activities and manage individual work efficiently.",
+    icon: ListChecks,
+    route: "/todolist/todolist",
+    iconBg: "#ECFDF5",
+    iconColor: "#059669",
   },
   {
     title: "RFP Estimation",
@@ -76,6 +66,26 @@ const modules = [
     iconColor: "#E11D48",
   },
   {
+    title: "Projects",
+    subtitle: "Project Management",
+    description:
+      "Monitor ongoing projects, manage workflows and collaborate with teams in one workspace.",
+    icon: FolderKanban,
+    route: "/projects",
+    iconBg: "#ECFDF5",
+    iconColor: "#059669",
+  },
+  {
+    title: "Timesheet",
+    subtitle: "Work Hour Management",
+    description:
+      "Log working hours, manage employee timesheets and track productivity effectively.",
+    icon: Clock3,
+    route: "/timesheet/view",
+    iconBg: "#F0F9FF",
+    iconColor: "#0284C7",
+  },
+  {
     title: "Quality Assurance",
     subtitle: "Testing & Validation",
     description:
@@ -86,24 +96,14 @@ const modules = [
     iconColor: "#7C3AED",
   },
   {
-    title: "Dashboard",
-    subtitle: "Business Overview",
+    title: "Final Source",
+    subtitle: "Source & Delivery Hub",
     description:
-      "Access key metrics, project insights and operational analytics from a centralized dashboard.",
-    icon: LayoutDashboard,
-    route: "/dashboard",
-    iconBg: "#EFF6FF",
-    iconColor: "#2563EB",
-  },
-  {
-    title: "To Do",
-    subtitle: "Personal Task Board",
-    description:
-      "Organize daily priorities, track pending activities and manage individual work efficiently.",
-    icon: ListChecks,
-    route: "/todolist/todolist",
-    iconBg: "#ECFDF5",
-    iconColor: "#059669",
+      "Centralize, manage and track all finalized project sources and delivery files efficiently.",
+    icon: Database,
+    route: "/final-source/list",
+    iconBg: "#EEF2FF",
+    iconColor: "#4F46E5",
   },
   {
     title: "Settings",
@@ -471,35 +471,142 @@ export default function SheetPage() {
 
                 {/* 🌐 THE GIANT SPHERICAL NETWORKING GLOBE FRAMEWORK */}
                 {/* Perfect circular outermost outline orbits */}
-                <circle cx="740" cy="115" r="114" stroke="#2563EB" strokeWidth="0.85" strokeDasharray="3 3" opacity="0.4" />
-                <circle cx="740" cy="115" r="104" stroke="#60A5FA" strokeWidth="1.3" strokeDasharray="8 6" opacity="0.35" />
-                <circle cx="740" cy="115" r="92" stroke="#3B82F6" strokeWidth="0.6" opacity="0.25" />
+                <circle
+                  cx="740"
+                  cy="115"
+                  r="114"
+                  stroke="#2563EB"
+                  strokeWidth="0.85"
+                  strokeDasharray="3 3"
+                  opacity="0.4"
+                />
+                <circle
+                  cx="740"
+                  cy="115"
+                  r="104"
+                  stroke="#60A5FA"
+                  strokeWidth="1.3"
+                  strokeDasharray="8 6"
+                  opacity="0.35"
+                />
+                <circle
+                  cx="740"
+                  cy="115"
+                  r="92"
+                  stroke="#3B82F6"
+                  strokeWidth="0.6"
+                  opacity="0.25"
+                />
 
                 {/* Horizontal Latitudinal Perspective Ellipses */}
-                <ellipse cx="740" cy="115" rx="104" ry="16" stroke="#3B82F6" strokeWidth="0.7" opacity="0.35" />
-                <ellipse cx="740" cy="115" rx="104" ry="38" stroke="#3B82F6" strokeWidth="0.75" opacity="0.4" />
-                <ellipse cx="740" cy="115" rx="104" ry="60" stroke="#3B82F6" strokeWidth="0.7" opacity="0.35" />
-                <ellipse cx="740" cy="115" rx="104" ry="82" stroke="#3B82F6" strokeWidth="0.5" opacity="0.25" />
+                <ellipse
+                  cx="740"
+                  cy="115"
+                  rx="104"
+                  ry="16"
+                  stroke="#3B82F6"
+                  strokeWidth="0.7"
+                  opacity="0.35"
+                />
+                <ellipse
+                  cx="740"
+                  cy="115"
+                  rx="104"
+                  ry="38"
+                  stroke="#3B82F6"
+                  strokeWidth="0.75"
+                  opacity="0.4"
+                />
+                <ellipse
+                  cx="740"
+                  cy="115"
+                  rx="104"
+                  ry="60"
+                  stroke="#3B82F6"
+                  strokeWidth="0.7"
+                  opacity="0.35"
+                />
+                <ellipse
+                  cx="740"
+                  cy="115"
+                  rx="104"
+                  ry="82"
+                  stroke="#3B82F6"
+                  strokeWidth="0.5"
+                  opacity="0.25"
+                />
 
                 {/* Vertical Longitudinal Perspective Ellipses */}
-                <ellipse cx="740" cy="115" rx="18" ry="104" stroke="#3B82F6" strokeWidth="0.7" opacity="0.35" />
-                <ellipse cx="740" cy="115" rx="42" ry="104" stroke="#3B82F6" strokeWidth="0.75" opacity="0.4" />
-                <ellipse cx="740" cy="115" rx="68" ry="104" stroke="#3B82F6" strokeWidth="0.7" opacity="0.35" />
-                <ellipse cx="740" cy="115" rx="88" ry="104" stroke="#3B82F6" strokeWidth="0.5" opacity="0.25" />
+                <ellipse
+                  cx="740"
+                  cy="115"
+                  rx="18"
+                  ry="104"
+                  stroke="#3B82F6"
+                  strokeWidth="0.7"
+                  opacity="0.35"
+                />
+                <ellipse
+                  cx="740"
+                  cy="115"
+                  rx="42"
+                  ry="104"
+                  stroke="#3B82F6"
+                  strokeWidth="0.75"
+                  opacity="0.4"
+                />
+                <ellipse
+                  cx="740"
+                  cy="115"
+                  rx="68"
+                  ry="104"
+                  stroke="#3B82F6"
+                  strokeWidth="0.7"
+                  opacity="0.35"
+                />
+                <ellipse
+                  cx="740"
+                  cy="115"
+                  rx="88"
+                  ry="104"
+                  stroke="#3B82F6"
+                  strokeWidth="0.5"
+                  opacity="0.25"
+                />
 
                 {/* 🕸️ Highly Intricate Interconnected Core Node Vectors */}
                 <g>
                   {[
-                    [660, 85, 710, 52], [710, 52, 775, 56], [775, 56, 820, 95],
-                    [820, 95, 808, 155], [808, 155, 750, 175], [750, 175, 684, 150],
-                    [684, 150, 660, 85], [660, 85, 745, 118], [710, 52, 808, 155],
-                    [684, 150, 775, 56], [750, 175, 820, 95], [710, 52, 750, 175],
-                    [745, 118, 820, 95], [745, 118, 684, 150], [745, 118, 775, 56],
-                    [660, 85, 700, 140], [700, 140, 750, 175], [775, 56, 788, 128],
-                    [788, 128, 808, 155], [684, 150, 728, 72], [728, 72, 710, 52],
-                    [660, 85, 775, 56], [710, 52, 820, 95], [820, 95, 750, 175],
-                    [808, 155, 684, 150], [684, 150, 775, 56], [710, 52, 808, 155],
-                    [660, 85, 750, 175], [710, 52, 745, 118], [775, 56, 745, 118]
+                    [660, 85, 710, 52],
+                    [710, 52, 775, 56],
+                    [775, 56, 820, 95],
+                    [820, 95, 808, 155],
+                    [808, 155, 750, 175],
+                    [750, 175, 684, 150],
+                    [684, 150, 660, 85],
+                    [660, 85, 745, 118],
+                    [710, 52, 808, 155],
+                    [684, 150, 775, 56],
+                    [750, 175, 820, 95],
+                    [710, 52, 750, 175],
+                    [745, 118, 820, 95],
+                    [745, 118, 684, 150],
+                    [745, 118, 775, 56],
+                    [660, 85, 700, 140],
+                    [700, 140, 750, 175],
+                    [775, 56, 788, 128],
+                    [788, 128, 808, 155],
+                    [684, 150, 728, 72],
+                    [728, 72, 710, 52],
+                    [660, 85, 775, 56],
+                    [710, 52, 820, 95],
+                    [820, 95, 750, 175],
+                    [808, 155, 684, 150],
+                    [684, 150, 775, 56],
+                    [710, 52, 808, 155],
+                    [660, 85, 750, 175],
+                    [710, 52, 745, 118],
+                    [775, 56, 745, 118],
                   ].map(([x1, y1, x2, y2], i) => (
                     <line
                       key={i}
@@ -517,10 +624,21 @@ export default function SheetPage() {
                 {/* Bright Structural Mesh Point Intersections */}
                 <g>
                   {[
-                    [660, 85, 3.5], [710, 52, 4.0], [775, 56, 4.5], [820, 95, 5.5],
-                    [808, 155, 4.5], [750, 175, 5.2], [684, 150, 4.0], [745, 118, 6.5],
-                    [700, 140, 3.5], [788, 128, 4.0], [728, 72, 3.0], [838, 132, 3.5],
-                    [638, 112, 3.0], [760, 82, 3.0], [722, 160, 3.5]
+                    [660, 85, 3.5],
+                    [710, 52, 4.0],
+                    [775, 56, 4.5],
+                    [820, 95, 5.5],
+                    [808, 155, 4.5],
+                    [750, 175, 5.2],
+                    [684, 150, 4.0],
+                    [745, 118, 6.5],
+                    [700, 140, 3.5],
+                    [788, 128, 4.0],
+                    [728, 72, 3.0],
+                    [838, 132, 3.5],
+                    [638, 112, 3.0],
+                    [760, 82, 3.0],
+                    [722, 160, 3.5],
                   ].map(([cx, cy, r], i) => (
                     <circle
                       key={i}
@@ -534,23 +652,84 @@ export default function SheetPage() {
                 </g>
 
                 {/* ✨ Scattered Ambient Particles & Light Flares */}
-                <circle cx="570" cy="65" r="4.5" fill="#60A5FA" opacity="0.45" />
+                <circle
+                  cx="570"
+                  cy="65"
+                  r="4.5"
+                  fill="#60A5FA"
+                  opacity="0.45"
+                />
                 <circle cx="612" cy="98" r="3.5" fill="#3B82F6" opacity="0.5" />
-                <circle cx="550" cy="158" r="4.0" fill="#60A5FA" opacity="0.4" />
-                <circle cx="520" cy="58" r="6.0" fill="#60A5FA" opacity="0.14" />
-                <circle cx="480" cy="115" r="3.5" fill="#3B82F6" opacity="0.25" />
-                <circle cx="875" cy="50" r="4.5" fill="#60A5FA" opacity="0.35" />
+                <circle
+                  cx="550"
+                  cy="158"
+                  r="4.0"
+                  fill="#60A5FA"
+                  opacity="0.4"
+                />
+                <circle
+                  cx="520"
+                  cy="58"
+                  r="6.0"
+                  fill="#60A5FA"
+                  opacity="0.14"
+                />
+                <circle
+                  cx="480"
+                  cy="115"
+                  r="3.5"
+                  fill="#3B82F6"
+                  opacity="0.25"
+                />
+                <circle
+                  cx="875"
+                  cy="50"
+                  r="4.5"
+                  fill="#60A5FA"
+                  opacity="0.35"
+                />
                 <circle cx="912" cy="82" r="3.0" fill="#3B82F6" opacity="0.4" />
 
-                <circle cx="460" cy="148" r="6" stroke="#60A5FA" strokeWidth="0.8" opacity="0.3" />
-                <circle cx="890" cy="95" r="5" stroke="#3B82F6" strokeWidth="0.8" opacity="0.35" />
-                <circle cx="955" cy="165" r="7" stroke="#60A5FA" strokeWidth="0.8" opacity="0.18" />
-                <circle cx="922" cy="182" r="4.5" fill="#3B82F6" opacity="0.4" />
+                <circle
+                  cx="460"
+                  cy="148"
+                  r="6"
+                  stroke="#60A5FA"
+                  strokeWidth="0.8"
+                  opacity="0.3"
+                />
+                <circle
+                  cx="890"
+                  cy="95"
+                  r="5"
+                  stroke="#3B82F6"
+                  strokeWidth="0.8"
+                  opacity="0.35"
+                />
+                <circle
+                  cx="955"
+                  cy="165"
+                  r="7"
+                  stroke="#60A5FA"
+                  strokeWidth="0.8"
+                  opacity="0.18"
+                />
+                <circle
+                  cx="922"
+                  cy="182"
+                  r="4.5"
+                  fill="#3B82F6"
+                  opacity="0.4"
+                />
 
                 {/* Wave-to-Globe Joining Points */}
                 {[
-                  [380, 198], [430, 182], [480, 208],
-                  [530, 186], [585, 167], [635, 149]
+                  [380, 198],
+                  [430, 182],
+                  [480, 208],
+                  [530, 186],
+                  [585, 167],
+                  [635, 149],
                 ].map(([cx, cy], i) => (
                   <circle
                     key={i}
