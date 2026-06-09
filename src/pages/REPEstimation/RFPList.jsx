@@ -4,10 +4,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Eye,
-  FileText,
   X,
   Plus,
-  Bell,
   MoreVertical,
   Filter,
   Download,
@@ -15,17 +13,14 @@ import {
   CheckCircle2,
   XCircle,
   Loader2,
-  TrendingUp,
   Briefcase,
   CalendarDays,
   AlertCircle,
-  Layers3,
-  ArrowUpRight,
-  BadgeCheck,
   Save,
   AlertTriangle,
   Pencil,
   Trash2,
+  RefreshCcw,
 } from "lucide-react";
 
 /* ─────────────────── INITIAL DATA ─────────────────── */
@@ -639,46 +634,24 @@ export default function EmployeeRFPPage() {
           <p className="mt-2 text-sm text-slate-500">Track and manage your submitted proposals and approvals.</p>
         </div>
         <div className="flex items-center gap-3">
-          <button className="relative flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 hover:bg-slate-50">
+          {/* <button className="relative flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 hover:bg-slate-50">
             <Bell size={18} />
             <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-500" />
-          </button>
-          <button
+          </button> */}
+          {/* <button
             onClick={() => setAddModal(true)}
             className="flex h-11 items-center gap-2 rounded-xl bg-blue-600 px-5 text-sm font-semibold text-white transition-all hover:bg-blue-700"
           >
             <Plus size={15} /> New RFP
-          </button>
+          </button> */}
         </div>
       </div>
 
-      {/* ── STATS ── */}
-      <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
-        {[
-          { label: "TOTAL RFP",  value: stats.total,    icon: Layers3,    bg: "bg-blue-50",    iconColor: "text-blue-600",    border: "border-l-blue-500"    },
-          { label: "APPROVED",   value: stats.approved, icon: BadgeCheck, bg: "bg-emerald-50", iconColor: "text-emerald-600", border: "border-l-emerald-500" },
-          { label: "PENDING",    value: stats.pending,  icon: Clock,      bg: "bg-amber-50",   iconColor: "text-amber-600",   border: "border-l-amber-500"   },
-          { label: "IN REVIEW",  value: stats.inReview, icon: TrendingUp, bg: "bg-cyan-50",    iconColor: "text-cyan-600",    border: "border-l-cyan-500"    },
-        ].map(({ label, value, icon: Icon, bg, iconColor, border }) => (
-          <div
-            key={label}
-            className={`relative overflow-hidden rounded-2xl border border-slate-200 border-l-[3px] ${border} bg-white px-5 py-5 shadow-sm`}
-          >
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">{label}</p>
-                <h2 className="mt-3 text-[34px] font-bold leading-none tracking-tight text-slate-900">{value}</h2>
-              </div>
-              <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${bg}`}>
-                <Icon size={18} className={iconColor} />
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
+      {/* ── TABLE ── */}
+      <div className="overflow-hidden rounded border border-slate-200 bg-white shadow-sm">
 
-      {/* ── FILTER BAR ── */}
-      <div className="flex flex-col gap-3 rounded-[24px] border border-slate-200 bg-white p-4 shadow-sm lg:flex-row lg:items-center lg:justify-between">
+  {/* ── FILTER BAR ── */}
+      <div className="flex flex-col gap-3 p-3 border-b border-slate-200 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex h-10 flex-1 items-center rounded-xl border border-slate-200 bg-white px-4 focus-within:border-blue-500">
           <Search size={14} className="text-slate-400" />
           <input
@@ -713,32 +686,13 @@ export default function EmployeeRFPPage() {
           </select>
           <button
             onClick={() => { setSearch(""); setStatus("All"); setPriority("All"); setCurrentPage(1); }}
-            className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-400 hover:bg-red-50 hover:text-red-500"
+            className="flex h-5 w-5 rounded items-center justify-center  bg-white text-slate-400  hover:text-red-500"
           >
-            <X size={15} />
+            <RefreshCcw  size={15} />
           </button>
         </div>
       </div>
 
-      {/* ── TABLE ── */}
-      <div className="overflow-hidden rounded-[24px] border border-slate-200 bg-white shadow-sm">
-
-        {/* Table top bar */}
-        <div className="flex flex-col gap-4 border-b border-slate-200 bg-slate-50/60 px-6 py-5 lg:flex-row lg:items-center lg:justify-between">
-          <div className="flex items-center gap-4">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50">
-              <FileText size={19} className="text-blue-600" />
-            </div>
-            <div>
-              <h2 className="font-semibold text-slate-800">RFP Records</h2>
-              <p className="mt-1 text-xs text-slate-500">Showing {filteredData.length} total records</p>
-            </div>
-          </div>
-          <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-4 py-2 text-xs font-semibold text-blue-700">
-            <ArrowUpRight size={12} />
-            Page {safePage} of {Math.max(totalPages, 1)}
-          </div>
-        </div>
 
         {/* Column headers */}
         <div className="overflow-x-auto">
@@ -748,7 +702,7 @@ export default function EmployeeRFPPage() {
                 {["RFP Code", "Project", "Assignee", "Priority", "Status", "Timeline", "Action"].map((head) => (
                   <th
                     key={head}
-                    className="whitespace-nowrap px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400"
+                    className="whitespace-nowrap px-5 py-2 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400"
                   >
                     {head}
                   </th>
@@ -865,7 +819,7 @@ export default function EmployeeRFPPage() {
 
         {/* Footer / Pagination */}
         {filteredData.length > 0 && (
-          <div className="flex flex-wrap items-center justify-between gap-4 border-t border-slate-200 bg-slate-50/50 px-6 py-4">
+          <div className="flex flex-wrap items-center justify-between gap-4 border-t border-slate-200 bg-slate-50/50 px-6 py-2">
             <p className="text-sm text-slate-500">
               Showing{" "}
               <span className="font-semibold text-slate-700">{(safePage - 1) * itemsPerPage + 1}</span> to{" "}

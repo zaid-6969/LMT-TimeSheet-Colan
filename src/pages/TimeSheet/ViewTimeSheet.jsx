@@ -559,16 +559,15 @@ export default function ModernTimesheetPage() {
       </div>
 
       {/* ── STATS ── */}
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
         {[
           { title: "TOTAL HOURS",  value: `${stats.totalHours}h`, sub: "Logged this period",      border: "border-l-blue-500",    iconBg: "bg-blue-50",    iconColor: "text-blue-600",    Icon: Clock3         },
           { title: "BILLABLE",     value: stats.billable,         sub: "Billable entries",         border: "border-l-emerald-500", iconBg: "bg-emerald-50", iconColor: "text-emerald-600", Icon: CheckCircle2   },
           { title: "NON BILLABLE", value: stats.nonBillable,      sub: "Non-billable entries",     border: "border-l-amber-500",   iconBg: "bg-amber-50",   iconColor: "text-amber-600",   Icon: AlertCircle    },
-          { title: "PROJECTS",     value: stats.projects,         sub: "Active projects tracked",  border: "border-l-cyan-500",    iconBg: "bg-cyan-50",    iconColor: "text-cyan-600",    Icon: FolderKanban   },
         ].map(({ title, value, sub, border, iconBg, iconColor, Icon }) => (
           <div
             key={title}
-            className={`relative overflow-hidden rounded-2xl border border-slate-200 border-l-[3px] ${border} bg-white px-5 py-5 shadow-sm`}
+            className={`relative overflow-hidden rounded-lg   bg-white px-5 py-5 shadow-sm`}
           >
             <div className="flex items-start justify-between">
               <div>
@@ -585,16 +584,16 @@ export default function ModernTimesheetPage() {
       </div>
 
       {/* ── TABLE ── */}
-      <div className="overflow-hidden rounded-[24px] border border-slate-200 bg-white shadow-sm">
+      <div className="overflow-hidden rounded border border-slate-200 bg-white shadow-sm">
 
         {/* TOOLBAR */}
-        <div className="flex flex-col gap-3 border-b border-slate-200 px-5 py-4 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex flex-col gap-3 border-b border-slate-200 px-5 py-2 lg:flex-row lg:items-center lg:justify-between">
           {/* LEFT */}
           <div className="flex flex-wrap items-center gap-2">
             <select
               value={projectFilter}
               onChange={(e) => { setProjectFilter(e.target.value); setCurrentPage(1); }}
-              className="h-10 rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 outline-none focus:border-blue-500"
+              className="h-8 rounded-lg border border-slate-200 bg-white text-sm font-medium text-slate-700 outline-none focus:border-blue-500"
             >
               <option value="All">All Projects</option>
               {PROJECTS.map((p) => <option key={p} value={p}>{p}</option>)}
@@ -603,7 +602,7 @@ export default function ModernTimesheetPage() {
             <select
               value={typeFilter}
               onChange={(e) => { setTypeFilter(e.target.value); setCurrentPage(1); }}
-              className="h-10 rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 outline-none focus:border-blue-500"
+              className="h-8 rounded-lg border border-slate-200 bg-white text-sm font-medium text-slate-700 outline-none focus:border-blue-500"
             >
               <option value="All">All Status</option>
               <option value="Billable">Billable</option>
@@ -614,26 +613,26 @@ export default function ModernTimesheetPage() {
               type="date"
               value={fromDate}
               onChange={(e) => { setFromDate(e.target.value); setCurrentPage(1); }}
-              className="h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-700 outline-none focus:border-blue-500"
+              className="h-8 rounded-lg border border-slate-200 bg-white px-1 text-sm text-slate-700 outline-none focus:border-blue-500"
             />
             <input
               type="date"
               value={toDate}
               onChange={(e) => { setToDate(e.target.value); setCurrentPage(1); }}
-              className="h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-700 outline-none focus:border-blue-500"
+              className="h-8 rounded-lg border border-slate-200 bg-white px-1 text-sm text-slate-700 outline-none focus:border-blue-500"
             />
 
             <button
               onClick={() => { setProjectFilter("All"); setTypeFilter("All"); setSearch(""); setFromDate(""); setToDate(""); setCurrentPage(1); }}
-              className="flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-600 hover:bg-slate-50"
+              className="flex h-8 items-center gap-2 rounded-lg  bg-white px-1 text-sm text-slate-600 hover:text-rose-500"
             >
-              <RefreshCcw size={14} /> Reset
+              <RefreshCcw size={15} />
             </button>
           </div>
 
           {/* RIGHT */}
           <div className="flex flex-wrap items-center gap-2">
-            <div className="flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 focus-within:border-blue-500">
+            <div className="flex h-8 items-center gap-2 rounded-lg border border-slate-200 bg-white px-2 focus-within:border-blue-500">
               <Search size={14} className="text-slate-400" />
               <input
                 value={search}
@@ -647,26 +646,13 @@ export default function ModernTimesheetPage() {
               <select
                 value={itemsPerPage}
                 onChange={(e) => { setItemsPerPage(Number(e.target.value)); setCurrentPage(1); }}
-                className="h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-700 outline-none"
+                className="h-8 rounded-lg border border-slate-200 bg-white  text-sm text-slate-700 outline-none"
               >
                 <option value={5}>5</option>
                 <option value={10}>10</option>
                 <option value={15}>15</option>
               </select>
               <span>per page</span>
-            </div>
-          </div>
-        </div>
-
-        {/* TABLE TITLE BAR */}
-        <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
-          <div className="flex items-center gap-4">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50">
-              <BriefcaseBusiness size={19} className="text-blue-600" />
-            </div>
-            <div>
-              <h2 className="font-semibold text-slate-800">Timesheet Entries</h2>
-              <p className="mt-0.5 text-xs text-slate-500">Total {filteredData.length} records</p>
             </div>
           </div>
         </div>
@@ -679,7 +665,7 @@ export default function ModernTimesheetPage() {
                 {["Date", "Project", "Module", "Task", "Start", "End", "Hours", "Status", "Action"].map((head) => (
                   <th
                     key={head}
-                    className="whitespace-nowrap px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400"
+                    className="whitespace-nowrap px-5 py-2 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400"
                   >
                     {head}
                   </th>
@@ -780,7 +766,7 @@ export default function ModernTimesheetPage() {
         </div>
 
         {/* FOOTER */}
-        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 bg-slate-50/50 px-5 py-4">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 bg-slate-50/50 px-5 py-2">
           <p className="text-sm text-slate-500">
             Showing{" "}
             <span className="font-semibold text-slate-700">{startRow}</span> to{" "}
@@ -800,7 +786,7 @@ export default function ModernTimesheetPage() {
               <button
                 key={pg}
                 onClick={() => setCurrentPage(pg)}
-                className={`flex h-9 w-9 items-center justify-center rounded-xl text-sm font-semibold ${
+                className={`flex h-7 w-7 items-center justify-center rounded text-sm font-semibold ${
                   safePage === pg
                     ? "bg-blue-600 text-white"
                     : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"

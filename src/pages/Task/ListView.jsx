@@ -15,7 +15,7 @@ import {
   Trash2,
   Search,
   ChevronDown,
-  RotateCcw,
+  RefreshCcw,
   AlertCircle,
   ThumbsUp,
   PauseCircle,
@@ -361,10 +361,9 @@ export default function TimesheetDashboard() {
 
             <button
               onClick={() => setSearch("")}
-              className="flex h-8 items-center gap-2 rounded border border-slate-200 bg-white px-1 text-sm text-slate-600 hover:bg-slate-50"
+              className="flex items-center gap-2  bg-white px-1 text-sm text-slate-600   hover:text-red-500"
             >
-              <RotateCcw size={14} />
-              Reset
+               <RefreshCcw size={15}/>
             </button>
           </div>
 
@@ -490,7 +489,7 @@ export default function TimesheetDashboard() {
             <button
               disabled={currentPage === 1}
               onClick={() => setCurrentPage((p) => p - 1)}
-              className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 disabled:opacity-40"
+              className="flex h-7 w-7 items-center justify-center rounded border border-slate-200 bg-white text-slate-600 disabled:opacity-40"
             >
               <ChevronLeft size={15} />
             </button>
@@ -499,7 +498,7 @@ export default function TimesheetDashboard() {
               <button
                 key={pg}
                 onClick={() => setCurrentPage(pg)}
-                className={`flex h-9 w-9 items-center justify-center rounded-xl text-sm font-semibold ${
+                className={`flex h-7 w-7 items-center justify-center rounded text-sm font-semibold ${
                   currentPage === pg
                     ? "bg-blue-600 text-white"
                     : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
@@ -512,7 +511,7 @@ export default function TimesheetDashboard() {
             <button
               disabled={currentPage === totalPages}
               onClick={() => setCurrentPage((p) => p + 1)}
-              className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 disabled:opacity-40"
+              className="flex h-7 w-7 items-center justify-center rounded border border-slate-200 bg-white text-slate-600 disabled:opacity-40"
             >
               <ChevronRight size={15} />
             </button>

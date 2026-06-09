@@ -7,7 +7,7 @@ import SheetPage from "../pages/SheetPage";
 // import DashboardHome from "../pages/Dashboard/DashboardHome";
 
 /* FINAL SOURCE */
-import AddFinalSource from "../pages/FinalSource/AddFinalSource";
+// import AddFinalSource from "../pages/FinalSource/AddFinalSource";
 import FinalSourceList from "../pages/FinalSource/FinalSourceList";
 
 /* PROJECT */
@@ -51,7 +51,7 @@ export default function AppRoutes() {
         {/* <Route path="/dashboard" element={<DashboardHome />} /> */}
 
         {/* FINAL SOURCE */}
-        <Route path="/final-source/add" element={<AddFinalSource />} />
+        {/* <Route path="/final-source/add" element={<AddFinalSource />} /> */}
 
         <Route path="/final-source/list" element={<FinalSourceList />} />
 

@@ -554,56 +554,20 @@ export default function ProjectListPage() {
             Manage employee and client projects with enterprise workflow tracking.
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          <button className="flex h-11 items-center gap-2 rounded-xl border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-700 hover:bg-slate-50">
-            <Download size={16} /> Export
-          </button>
-          <button
-            onClick={() => setAddModal(true)}
-            className="flex h-11 items-center gap-2 rounded-xl bg-blue-600 px-5 text-sm font-semibold text-white transition-all hover:bg-blue-700"
-          >
-            <Plus size={16} /> Add Project
-          </button>
-        </div>
-      </div>
-
-      {/* ── STATS ── */}
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
-        {[
-          { title: "TOTAL PROJECTS", value: stats.total,     sub: "Active project records",   border: "border-l-blue-500",    iconBg: "bg-blue-50",    iconColor: "text-blue-600",    Icon: FolderKanban  },
-          { title: "COMPLETED",      value: stats.completed, sub: "Successfully delivered",   border: "border-l-emerald-500", iconBg: "bg-emerald-50", iconColor: "text-emerald-600", Icon: CheckCircle2  },
-          { title: "ACTIVE",         value: stats.active,    sub: "Currently in progress",    border: "border-l-cyan-500",    iconBg: "bg-cyan-50",    iconColor: "text-cyan-600",    Icon: Loader2       },
-          { title: "PENDING",        value: stats.pending,   sub: "Pending or under review",  border: "border-l-amber-500",   iconBg: "bg-amber-50",   iconColor: "text-amber-600",   Icon: AlertCircle   },
-        ].map(({ title, value, sub, border, iconBg, iconColor, Icon }) => (
-          <div
-            key={title}
-            className={`relative overflow-hidden rounded-2xl border border-slate-200 border-l-[3px] ${border} bg-white px-5 py-5 shadow-sm`}
-          >
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">{title}</p>
-                <h2 className="mt-3 text-[34px] font-bold leading-none tracking-tight text-slate-900">{value}</h2>
-              </div>
-              <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${iconBg}`}>
-                <Icon size={18} className={iconColor} />
-              </div>
-            </div>
-            <p className="mt-4 text-xs font-medium text-slate-500">{sub}</p>
-          </div>
-        ))}
+       
       </div>
 
       {/* ── TABLE ── */}
-      <div className="overflow-hidden rounded-[24px] border border-slate-200 bg-white shadow-sm">
+      <div className="overflow-hidden rounded border border-slate-200 bg-white shadow-sm">
 
         {/* TOOLBAR */}
-        <div className="flex flex-col gap-3 border-b border-slate-200 px-5 py-4 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex flex-col gap-3 border-b border-slate-200 px-5 py-2 lg:flex-row lg:items-center lg:justify-between">
           {/* LEFT */}
           <div className="flex flex-wrap items-center gap-2">
             <select
               value={activeTag}
               onChange={(e) => { setActiveTag(e.target.value); setCurrentPage(1); }}
-              className="h-10 rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 outline-none focus:border-blue-500"
+              className="h-8 rounded-lg border border-slate-200 bg-white px-2 text-sm font-medium text-slate-700 outline-none focus:border-blue-500"
             >
               <option value="All">All Status</option>
               <option value="Active">Active</option>
@@ -612,21 +576,21 @@ export default function ProjectListPage() {
               <option value="Review">Review</option>
             </select>
 
-            <button className="flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 hover:border-blue-400">
+            <button className="flex h-8 items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 hover:border-blue-400">
               <CalendarDays size={15} className="text-blue-600" /> May 2026
             </button>
 
             <button
               onClick={() => { setActiveTag("All"); setSearch(""); setCurrentPage(1); }}
-              className="flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-600 hover:bg-slate-50"
+              className="flex items-center gap-2 rounded-lg  bg-white px-2 text-sm text-slate-600 hover:text-rose-500"
             >
-              <RefreshCcw size={14} /> Reset
+              <RefreshCcw size={15} />
             </button>
           </div>
 
           {/* RIGHT */}
           <div className="flex flex-wrap items-center gap-2">
-            <div className="flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 focus-within:border-blue-500">
+            <div className="flex h-8 items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 focus-within:border-blue-500">
               <Search size={14} className="text-slate-400" />
               <input
                 value={search}
@@ -640,7 +604,7 @@ export default function ProjectListPage() {
               <select
                 value={itemsPerPage}
                 onChange={(e) => { setItemsPerPage(Number(e.target.value)); setCurrentPage(1); }}
-                className="h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-700 outline-none"
+                className="h-8 rounded-lg border border-slate-200 bg-white  text-sm text-slate-700 outline-none"
               >
                 <option value={5}>5</option>
                 <option value={10}>10</option>
@@ -659,7 +623,7 @@ export default function ProjectListPage() {
                 {["Project", "Employee", "Task", "Priority", "Status", "Date", "Action"].map((head) => (
                   <th
                     key={head}
-                    className="whitespace-nowrap px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400"
+                    className="whitespace-nowrap px-5 py-2 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400"
                   >
                     {head}
                   </th>
@@ -756,7 +720,7 @@ export default function ProjectListPage() {
         </div>
 
         {/* FOOTER */}
-        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 bg-slate-50/50 px-5 py-4">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 bg-slate-50/50 px-5 py-2">
           <p className="text-sm text-slate-500">
             Showing{" "}
             <span className="font-semibold text-slate-700">{startRow}</span> to{" "}

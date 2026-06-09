@@ -48,7 +48,21 @@ const taskEvents = {
       time: "9:30 AM – 12:30 PM",
       status: "Completed",
     },
+    {
+      project: "ERP Dashboard",
+      employee: "John Doe",
+      task: "Create Timesheet Calendar UI",
+      time: "10:00 AM – 1:00 PM",
+      status: "In Progress",
+    },
 
+    {
+      project: "HRMS Portal",
+      employee: "Sophia",
+      task: "Fix Authentication Bugs",
+      time: "3:00 PM – 5:00 PM",
+      status: "Completed",
+    },
     {
       project: "ERP System",
       employee: "William",
@@ -651,7 +665,7 @@ export default function CalendarView() {
 
           {/* SEARCH */}
           {rawTasks.length > 0 && (
-            <div className="border-b border-slate-200 p-4">
+            <div className=" border-b border-slate-200 p-4">
               <div
                 className="
                   relative
@@ -696,7 +710,7 @@ export default function CalendarView() {
           )}
 
           {/* TASK LIST */}
-          <div className="max-h-[720px] overflow-y-auto p-4">
+          <div className="max-h-[500px]  overflow-y-auto p-4">
             {selectedTasks.length > 0 ? (
               <div className="space-y-3">
                 {selectedTasks.map((task, i) => (

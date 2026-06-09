@@ -288,52 +288,20 @@ export default function FinalSourceList() {
           <p className="mt-2 text-sm text-slate-500">Manage uploaded source files, project versions and approvals.</p>
         </div>
 
-        <div className="flex items-center gap-3">
-          <button className="flex h-11 items-center gap-2 rounded-xl border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-700 transition-all hover:bg-slate-50">
-            <Download size={16} /> Export
-          </button>
-          <button
-            onClick={openAddModal}
-            className="flex h-11 items-center gap-2 rounded-xl bg-blue-600 px-5 text-sm font-semibold text-white transition-all hover:bg-blue-700"
-          >
-            <Plus size={16} /> Add Source
-          </button>
-        </div>
+  
       </div>
 
-      {/* ── SUMMARY CARDS ── */}
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
-        {[
-          { title: "TOTAL SOURCES", value: sources.length, sub: "Uploaded source files", border: "border-l-blue-500", iconBg: "bg-blue-50", iconColor: "text-blue-600", Icon: FolderKanban },
-          { title: "APPROVED", value: approvedCount, sub: "Approved projects", border: "border-l-emerald-500", iconBg: "bg-emerald-50", iconColor: "text-emerald-600", Icon: BadgeCheck },
-          { title: "PENDING", value: pendingCount, sub: "Waiting approvals", border: "border-l-amber-500", iconBg: "bg-amber-50", iconColor: "text-amber-600", Icon: Clock3 },
-          { title: "REJECTED", value: rejectedCount, sub: "Rejected files", border: "border-l-red-500", iconBg: "bg-red-50", iconColor: "text-red-600", Icon: AlertCircle },
-        ].map(({ title, value, sub, border, iconBg, iconColor, Icon }) => (
-          <div key={title} className={`relative overflow-hidden rounded-2xl border border-slate-200 border-l-[3px] ${border} bg-white px-5 py-5 shadow-sm`}>
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">{title}</p>
-                <h2 className="mt-3 text-[34px] font-bold leading-none tracking-tight text-slate-900">{String(value).padStart(2, "0")}</h2>
-              </div>
-              <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${iconBg}`}>
-                <Icon size={18} className={iconColor} />
-              </div>
-            </div>
-            <p className="mt-4 text-xs font-medium text-slate-500">{sub}</p>
-          </div>
-        ))}
-      </div>
 
       {/* ── TABLE WRAPPER ── */}
-      <div className="overflow-hidden rounded-[24px] border border-slate-200 bg-white shadow-sm">
+      <div className="overflow-hidden rounded border border-slate-200 bg-white shadow-sm">
         {/* TOOLBAR */}
-        <div className="flex flex-col gap-3 border-b border-slate-200 px-5 py-4 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex flex-col gap-3 border-b border-slate-200 px-3 py-2 lg:flex-row lg:items-center lg:justify-between">
           {/* LEFT FILTERS */}
           <div className="flex flex-wrap items-center gap-2">
             <select
               value={projectStatus}
               onChange={(e) => { setProjectStatus(e.target.value); setCurrentPage(1); }}
-              className="h-10 rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 outline-none focus:border-blue-500"
+              className="h-8 rounded-lg border border-slate-200 bg-white px-1 text-sm font-medium text-slate-700 outline-none focus:border-blue-500"
             >
               <option value="All">All Status</option>
               <option value="Approved">Approved</option>
@@ -344,7 +312,7 @@ export default function FinalSourceList() {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="h-10 rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 outline-none focus:border-blue-500"
+              className="h-8 rounded-lg border border-slate-200 bg-white px-1 text-sm font-medium text-slate-700 outline-none focus:border-blue-500"
             >
               <option value="latest">Latest Uploader</option>
               <option value="name-asc">Name A–Z</option>
@@ -355,7 +323,7 @@ export default function FinalSourceList() {
             <select
               value={versionFilter}
               onChange={(e) => { setVersionFilter(e.target.value); setCurrentPage(1); }}
-              className="h-10 rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 outline-none focus:border-blue-500"
+              className="h-8 rounded-lg border border-slate-200 bg-white px-2 text-sm font-medium text-slate-700 outline-none focus:border-blue-500"
             >
               <option value="All">All Versions</option>
               <option value="v1">v1.x</option>
@@ -363,14 +331,14 @@ export default function FinalSourceList() {
               <option value="v3">v3.x</option>
             </select>
 
-            <button onClick={handleReset} className="flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-600 hover:bg-slate-50">
-              <RefreshCcw size={14} /> Reset
+            <button onClick={handleReset} className="flex h-8 items-center gap-2 bg-white px-2 text-sm text-slate-600 hover:text-rose-500">
+              <RefreshCcw size={15} />
             </button>
           </div>
 
           {/* RIGHT SEARCH & PER PAGE */}
           <div className="flex flex-wrap items-center gap-2">
-            <div className="flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 focus-within:border-blue-500">
+            <div className="flex h-8 items-center gap-2 rounded-lg border border-slate-200 bg-white px-2 focus-within:border-blue-500">
               <Search size={14} className="text-slate-400" />
               <input
                 value={search}
@@ -385,7 +353,7 @@ export default function FinalSourceList() {
               <select
                 value={rowsPerPage}
                 onChange={(e) => { setRowsPerPage(Number(e.target.value)); setCurrentPage(1); }}
-                className="h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-700 outline-none"
+                className="h-8 rounded-lg border border-slate-200 bg-white  text-sm text-slate-700 outline-none"
               >
                 <option value={5}>5</option>
                 <option value={10}>10</option>
@@ -402,7 +370,7 @@ export default function FinalSourceList() {
             <thead className="bg-slate-100/70">
               <tr className="border-b border-slate-200">
                 {["Code", "Title", "Upload On", "Upload By", "Version", "Size", "Status", "Action"].map((head) => (
-                  <th key={head} className="whitespace-nowrap px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400">
+                  <th key={head} className="whitespace-nowrap px-5 py-2 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400">
                     {head}
                   </th>
                 ))}
@@ -477,7 +445,7 @@ export default function FinalSourceList() {
         </div>
 
         {/* FOOTER / PAGINATION */}
-        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 bg-slate-50/50 px-5 py-4">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 bg-slate-50/50 px-5 py-1">
           <p className="text-sm text-slate-500">
             Showing <span className="font-semibold text-slate-700">{startRow}</span> to{" "}
             <span className="font-semibold text-slate-700">{endRow}</span> of{" "}

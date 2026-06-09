@@ -580,94 +580,18 @@ export default function QAProjectList() {
             Monitor QA reports, project testing progress and issue tracking.
           </p>
         </div>
-
-        <div className="flex items-center gap-3">
-          <button className="flex h-11 items-center gap-2 rounded-xl border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-700 transition-all hover:bg-slate-50">
-            <Download size={17} />
-            Export
-          </button>
-          <button 
-            onClick={() => setAddModal(true)}
-            className="flex h-11 items-center gap-2 rounded-xl bg-blue-600 px-5 text-sm font-semibold text-white transition-all hover:bg-blue-700"
-          >
-            <Plus size={17} />
-            Add Report
-          </button>
-        </div>
-      </div>
-
-      {/* ── SUMMARY CARDS ── */}
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
-        {[
-          {
-            title: "TOTAL PROJECTS",
-            value: qaData.length,
-            sub: "QA monitored projects",
-            border: "border-l-blue-500",
-            iconBg: "bg-blue-50",
-            iconColor: "text-blue-600",
-            Icon: FolderKanban,
-          },
-          {
-            title: "ACTIVE",
-            value: activeCount,
-            sub: "Active QA projects",
-            border: "border-l-blue-500",
-            iconBg: "bg-blue-50",
-            iconColor: "text-blue-600",
-            Icon: Loader2,
-          },
-          {
-            title: "COMPLETED",
-            value: completedCount,
-            sub: "Completed testing",
-            border: "border-l-emerald-500",
-            iconBg: "bg-emerald-50",
-            iconColor: "text-emerald-600",
-            Icon: CheckCircle2,
-          },
-          {
-            title: "PENDING",
-            value: pendingCount,
-            sub: "Waiting approvals",
-            border: "border-l-amber-500",
-            iconBg: "bg-amber-50",
-            iconColor: "text-amber-600",
-            Icon: AlertCircle,
-          },
-        ].map(({ title, value, sub, border, iconBg, iconColor, Icon }) => (
-          <div
-            key={title}
-            className={`relative overflow-hidden rounded-2xl border border-slate-200 border-l-[3px] ${border} bg-white px-5 py-5 shadow-sm`}
-          >
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">
-                  {title}
-                </p>
-                <h2 className="mt-3 text-[34px] font-bold leading-none tracking-tight text-slate-900">
-                  {String(value).padStart(2, "0")}
-                </h2>
-              </div>
-              <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${iconBg}`}>
-                <Icon size={18} className={iconColor} />
-              </div>
-            </div>
-            <p className="mt-4 text-xs font-medium text-slate-500">{sub}</p>
-          </div>
-        ))}
       </div>
 
       {/* ── TABLE ── */}
-      <div className="overflow-hidden rounded-[24px] border border-slate-200 bg-white shadow-sm">
+      <div className="overflow-hidden rounded border border-slate-200 bg-white shadow-sm">
         {/* TOOLBAR */}
-        <div className="flex flex-col gap-3 border-b border-slate-200 px-5 py-4 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex flex-col gap-3 border-b border-slate-200 px-5 py-2 lg:flex-row lg:items-center lg:justify-between">
           {/* LEFT */}
           <div className="flex flex-wrap items-center gap-2">
             <select
               value={projectStatus}
               onChange={(e) => { setProjectStatus(e.target.value); setCurrentPage(1); }}
-              className="h-10 rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 outline-none focus:border-blue-500"
+              className="h-8 rounded-lg border border-slate-200 bg-white px-1 text-sm font-medium text-slate-700 outline-none focus:border-blue-500"
             >
               <option value="All">All Status</option>
               <option value="Active">Active</option>
@@ -678,7 +602,7 @@ export default function QAProjectList() {
             <select
               value={projectFilter}
               onChange={(e) => { setProjectFilter(e.target.value); setCurrentPage(1); }}
-              className="h-10 rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 outline-none focus:border-blue-500"
+              className="h-8 rounded-lg border border-slate-200 bg-white px-1 text-sm font-medium text-slate-700 outline-none focus:border-blue-500"
             >
               {uniqueProjectsList.map(proj => (
                 <option key={proj} value={proj}>{proj === "All" ? "All Projects" : proj}</option>
@@ -688,7 +612,7 @@ export default function QAProjectList() {
             <select
               value={testerFilter}
               onChange={(e) => { setTesterFilter(e.target.value); setCurrentPage(1); }}
-              className="h-10 rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 outline-none focus:border-blue-500"
+              className="h-8 rounded-lg border border-slate-200 bg-white px-1 text-sm font-medium text-slate-700 outline-none focus:border-blue-500"
             >
               {uniqueTestersList.map(test => (
                 <option key={test} value={test}>{test === "All" ? "All Testers" : test}</option>
@@ -698,7 +622,7 @@ export default function QAProjectList() {
             <select
               value={priorityFilter}
               onChange={(e) => { setPriorityFilter(e.target.value); setCurrentPage(1); }}
-              className="h-10 rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 outline-none focus:border-blue-500"
+              className="h-8 rounded-lg border border-slate-200 bg-white px-2 text-sm font-medium text-slate-700 outline-none focus:border-blue-500"
             >
               <option value="All">All Priority</option>
               <option value="High">High</option>
@@ -708,16 +632,15 @@ export default function QAProjectList() {
 
             <button
               onClick={handleReset}
-              className="flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-600 hover:bg-slate-50"
+              className="flex h-8 items-center gap-2 rounded-lg bg-white px-1 text-sm text-slate-600 hover:text-rose-500"
             >
-              <RefreshCcw size={14} />
-              Reset
+              <RefreshCcw size={15} />
             </button>
           </div>
 
           {/* RIGHT */}
           <div className="flex flex-wrap items-center gap-2">
-            <div className="flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 focus-within:border-blue-500">
+            <div className="flex h-8 items-center gap-2 rounded-lg border border-slate-200 bg-white px-1 focus-within:border-blue-500">
               <Search size={14} className="text-slate-400" />
               <input
                 value={search}
@@ -732,7 +655,7 @@ export default function QAProjectList() {
               <select
                 value={rowsPerPage}
                 onChange={(e) => { setRowsPerPage(Number(e.target.value)); setCurrentPage(1); }}
-                className="h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-700 outline-none"
+                className="h-8 rounded-lg border border-slate-200 bg-white text-sm text-slate-700 outline-none"
               >
                 <option value={5}>5</option>
                 <option value={10}>10</option>
@@ -752,7 +675,7 @@ export default function QAProjectList() {
                   (head) => (
                     <th
                       key={head}
-                      className="whitespace-nowrap px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400"
+                      className="whitespace-nowrap px-5 py-2 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400"
                     >
                       {head}
                     </th>
@@ -832,31 +755,13 @@ export default function QAProjectList() {
                 </tr>
               ))}
 
-              {paginatedData.length === 0 && (
-                <tr>
-                  <td colSpan={8} className="px-5 py-16 text-center">
-                    <div className="flex flex-col items-center justify-center">
-                      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100">
-                        <FolderKanban size={28} className="text-slate-400" />
-                      </div>
-                      <p className="font-semibold text-slate-700">No projects found.</p>
-                      <p className="mt-1 text-sm text-slate-400">Try adjusting filters or add a new QA report.</p>
-                      <button
-                        onClick={() => setAddModal(true)}
-                        className="mt-4 flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700"
-                      >
-                        <Plus size={14} /> Add Report
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              )}
+        
             </tbody>
           </table>
         </div>
 
         {/* FOOTER / PAGINATION */}
-        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 bg-slate-50/50 px-5 py-4">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 bg-slate-50/50 px-5 py-1">
           <p className="text-sm text-slate-500">
             Showing{" "}
             <span className="font-semibold text-slate-700">{startRow}</span> to{" "}
