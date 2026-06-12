@@ -11,23 +11,27 @@ import {
   ChevronRight,
   X,
   Clock,
-  Calendar,
-  Layers,
-  FileText,
   CheckCircle2,
   PauseCircle,
+  BriefcaseBusiness
 } from "lucide-react";
 
 const FixedPrice = () => {
   /* ─────────────────── STATE MANAGEMENT ─────────────────── */
-  const [typeFilter, setTypeFilter] = useState("All"); // Filters Billable / Non Billable
+  const [typeFilter, setTypeFilter] = useState("All"); 
+  const [projectFilter, setProjectFilter] = useState("All"); // New Project Dropdown Filter
   const [search, setSearch] = useState("");
   const [activeMenuId, setActiveMenuId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   
-  // Modal toggle and input form fields state
+  // Modals Toggle Toggles
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  // Form Field State Values
+  const [selectedRecord, setSelectedRecord] = useState(null);
   const [newDate, setNewDate] = useState("");
   const [newProject, setNewProject] = useState("");
   const [newModule, setNewModule] = useState("");
@@ -37,16 +41,22 @@ const FixedPrice = () => {
   const [newHours, setNewHours] = useState("");
   const [newType, setNewType] = useState("Billable");
 
-  // Dynamic state data collection adapted to your system logs
+  // Main Records Dataset
   const [records, setRecords] = useState([
     { id: 1, date: "2026-06-10", project: "ERP Dashboard", module: "Frontend", task: "Build Timesheet UI Components", start: "10:15 AM", end: "08:00 PM", hours: 9.75, type: "Non Billable" },
     { id: 2, date: "2026-06-09", project: "CRM System", module: "Backend", task: "API Integration for Task Module", start: "09:00 AM", end: "06:00 PM", hours: 9.00, type: "Billable" },
     { id: 3, date: "2026-06-09", project: "Inventory Mgmt", module: "Database", task: "Schema Design & Optimization", start: "11:00 AM", end: "04:30 PM", hours: 5.50, type: "Billable" },
     { id: 4, date: "2026-06-08", project: "HRMS Portal", module: "Frontend", task: "Authentication Logic & Redux Setup", start: "08:30 AM", end: "05:00 PM", hours: 8.50, type: "Billable" },
-    { id: 5, code: "FP-005", date: "2026-06-08", project: "POS System", module: "Testing", task: "Write End-to-End Cypress Tests", start: "01:00 PM", end: "06:00 PM", hours: 5.00, type: "Non Billable" },
+    { id: 5, date: "2026-06-08", project: "POS System", module: "Testing", task: "Write End-to-End Cypress Tests", start: "01:00 PM", end: "06:00 PM", hours: 5.00, type: "Non Billable" },
     { id: 6, date: "2026-06-05", project: "Accounting App", module: "Backend", task: "Tax Calculation Engine Fixes", start: "10:00 AM", end: "07:30 PM", hours: 9.50, type: "Billable" },
     { id: 7, date: "2026-06-04", project: "ERP Dashboard", module: "DevOps", task: "Vercel Deployment & Secret Configs", start: "09:15 AM", end: "12:15 PM", hours: 3.00, type: "Non Billable" },
   ]);
+
+  // Extract unique projects list dynamically for the selector filter choices
+  const uniqueProjectsList = useMemo(() => {
+    const list = records.map(r => r.project);
+    return ["All", ...new Set(list)];
+  }, [records]);
 
   /* ─────────────────── REAL-TIME HOURS METRICS LOGIC ─────────────────── */
   const metrics = useMemo(() => {
@@ -65,17 +75,23 @@ const FixedPrice = () => {
   const filteredRecords = useMemo(() => {
     return records.filter((item) => {
       const matchesType = typeFilter === "All" || item.type === typeFilter;
+      const matchesProject = projectFilter === "All" || item.project === projectFilter;
       const matchesSearch =
         item.project.toLowerCase().includes(search.toLowerCase()) ||
         item.module.toLowerCase().includes(search.toLowerCase()) ||
         item.task.toLowerCase().includes(search.toLowerCase());
-      return matchesType && matchesSearch;
+      return matchesType && matchesProject && matchesSearch;
     });
-  }, [records, search, typeFilter]);
+  }, [records, search, typeFilter, projectFilter]);
 
   /* ─────────────────── EVENT HANDLERS ─────────────────── */
   const handleTypeChange = (value) => {
     setTypeFilter(value);
+    setCurrentPage(1);
+  };
+
+  const handleProjectFilterChange = (value) => {
+    setProjectFilter(value);
     setCurrentPage(1);
   };
 
@@ -91,8 +107,31 @@ const FixedPrice = () => {
 
   const handleResetFilters = () => {
     setTypeFilter("All");
+    setProjectFilter("All");
     setSearch("");
     setCurrentPage(1);
+  };
+
+  // Open Actions View Handler
+  const handleOpenViewModal = (item) => {
+    setSelectedRecord(item);
+    setIsViewModalOpen(true);
+    setActiveMenuId(null);
+  };
+
+  // Open Edit Action Form Population
+  const handleOpenEditModal = (item) => {
+    setSelectedRecord(item);
+    setNewDate(item.date);
+    setNewProject(item.project);
+    setNewModule(item.module);
+    setNewTask(item.task);
+    setNewStart(item.start);
+    setNewEnd(item.end);
+    setNewHours(item.hours.toString());
+    setNewType(item.type);
+    setIsEditModalOpen(true);
+    setActiveMenuId(null);
   };
 
   const handleAddSubmission = (e) => {
@@ -111,9 +150,38 @@ const FixedPrice = () => {
       type: newType
     };
 
-    setRecords([newlyCreatedItem, ...records]); // Prepends directly to top of table view
-    
-    // Clear Form input nodes variables
+    setRecords([newlyCreatedItem, ...records]);
+    resetFormStates();
+    setIsModalOpen(false);
+    setCurrentPage(1);
+  };
+
+  const handleEditSubmission = (e) => {
+    e.preventDefault();
+    if (!selectedRecord) return;
+
+    setRecords(records.map(rec => {
+      if (rec.id === selectedRecord.id) {
+        return {
+          ...rec,
+          date: newDate,
+          project: newProject,
+          module: newModule,
+          task: newTask,
+          start: newStart,
+          end: newEnd,
+          hours: parseFloat(newHours) || 0,
+          type: newType
+        };
+      }
+      return rec;
+    }));
+
+    resetFormStates();
+    setIsEditModalOpen(false);
+  };
+
+  const resetFormStates = () => {
     setNewDate("");
     setNewProject("");
     setNewModule("");
@@ -122,8 +190,7 @@ const FixedPrice = () => {
     setNewEnd("");
     setNewHours("");
     setNewType("Billable");
-    setIsModalOpen(false);
-    setCurrentPage(1);
+    setSelectedRecord(null);
   };
 
   /* ─────────────────── PAGINATION COMPUTATION ─────────────────── */
@@ -216,7 +283,7 @@ const FixedPrice = () => {
           </div>
           
           <button 
-            onClick={() => setIsModalOpen(true)}
+            onClick={() => { resetFormStates(); setIsModalOpen(true); }}
             className="h-9 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm shadow-blue-500/10 transition px-4"
           >
             <Plus size={14} />
@@ -224,7 +291,22 @@ const FixedPrice = () => {
           </button>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+          <div>
+            <label className="block text-xs font-bold text-slate-500 uppercase mb-2 tracking-wider">
+              Project Name
+            </label>
+            <select
+              value={projectFilter}
+              onChange={(e) => handleProjectFilterChange(e.target.value)}
+              className="w-full h-11 border border-slate-200 bg-slate-50/50 rounded-xl px-3 text-sm font-medium focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 text-slate-800 cursor-pointer"
+            >
+              {uniqueProjectsList.map((proj, idx) => (
+                <option key={idx} value={proj}>{proj === "All" ? "All Projects" : proj}</option>
+              ))}
+            </select>
+          </div>
+
           <div>
             <label className="block text-xs font-bold text-slate-500 uppercase mb-2 tracking-wider">
               Billing Scope Type
@@ -232,7 +314,7 @@ const FixedPrice = () => {
             <select
               value={typeFilter}
               onChange={(e) => handleTypeChange(e.target.value)}
-              className="w-full h-11 border border-slate-200 bg-slate-50/50 rounded-xl px-4 text-sm font-medium focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 text-slate-800 cursor-pointer"
+              className="w-full h-11 border border-slate-200 bg-slate-50/50 rounded-xl px-3 text-sm font-medium focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 text-slate-800 cursor-pointer"
             >
               <option value="All">All Entry Types</option>
               <option value="Billable">Billable</option>
@@ -248,7 +330,7 @@ const FixedPrice = () => {
               <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
               <input
                 type="text"
-                placeholder="Search project, module or task descriptor..."
+                placeholder="Search module or task descriptor..."
                 value={search}
                 onChange={(e) => handleSearchChange(e.target.value)}
                 className="w-full h-11 pl-10 pr-4 border border-slate-200 bg-slate-50/50 rounded-xl text-sm focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 text-slate-900"
@@ -270,25 +352,23 @@ const FixedPrice = () => {
       {/* ─── CUSTOM TIME LOG DATA TABLE CARD ─── */}
       <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
         
-        <div className="px-6 py-4 border-b border-slate-100 bg-white flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-            <h2 className="font-bold text-slate-900">Project Timesheet Repository</h2>
-            
-            {/* Embedded List View Dropdown */}
-            <div className="flex items-center gap-1.5 text-xs font-bold text-slate-400 uppercase tracking-wider bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-200/60">
-              <span className="text-slate-500">Show</span>
-              <select
-                value={itemsPerPage}
-                onChange={(e) => handleEntriesChange(e.target.value)}
-                className="bg-transparent text-xs font-extrabold focus:outline-none text-blue-600 cursor-pointer"
-              >
-                <option value={5}>5</option>
-                <option value={10}>10</option>
-                <option value={25}>25</option>
-                <option value={50}>50</option>
-              </select>
-              <span className="text-slate-500">entries</span>
-            </div>
+        {/* RE-LOCATED DROPDOWN ALIGNED TO THE RIGHT SIDE */}
+        <div className="px-6 py-4 border-b border-slate-100 bg-white flex items-center justify-between gap-4">
+          <h2 className="font-bold text-slate-900">Project Timesheet Repository</h2>
+          
+          <div className="flex items-center gap-1.5 text-xs font-bold text-slate-400 uppercase tracking-wider bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-200/60">
+            <span className="text-slate-500">Show</span>
+            <select
+              value={itemsPerPage}
+              onChange={(e) => handleEntriesChange(e.target.value)}
+              className="bg-transparent text-xs font-extrabold focus:outline-none text-blue-600 cursor-pointer"
+            >
+              <option value={5}>5</option>
+              <option value={10}>10</option>
+              <option value={25}>25</option>
+              <option value={50}>50</option>
+            </select>
+            <span className="text-slate-500">entries</span>
           </div>
         </div>
 
@@ -346,11 +426,19 @@ const FixedPrice = () => {
                         {activeMenuId === item.id && (
                           <>
                             <div className="fixed inset-0 z-10" onClick={() => setActiveMenuId(null)} />
-                            <div className="absolute right-12 mt-2 w-32 rounded-lg bg-white p-1 shadow-lg ring-1 ring-black/5 z-20 text-left border border-slate-100">
-                              <button onClick={() => setActiveMenuId(null)} className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50">
+                            <div className="absolute right-12 mt-1 w-32 rounded-lg bg-white p-1 shadow-lg ring-1 ring-black/5 z-20 text-left border border-slate-100">
+                              <button 
+                                type="button"
+                                onClick={() => handleOpenViewModal(item)} 
+                                className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
+                              >
                                 <Eye size={13} className="text-slate-400" /> View Log
                               </button>
-                              <button onClick={() => setActiveMenuId(null)} className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50">
+                              <button 
+                                type="button"
+                                onClick={() => handleOpenEditModal(item)} 
+                                className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
+                              >
                                 <Pencil size={13} className="text-slate-400" /> Edit Entry
                               </button>
                             </div>
@@ -398,7 +486,7 @@ const FixedPrice = () => {
 
             <button
               disabled={safePage === totalPages}
-              onClick={() => setCurrentPage((p) => p + 1)}
+              onClick={() => setCurrentPage((p) => p - 1)}
               className="flex h-8 w-8 items-center justify-center rounded border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed"
             >
               <ChevronRight size={15} />
@@ -407,137 +495,151 @@ const FixedPrice = () => {
         </div>
       </div>
 
-      {/* ─── DYNAMIC TIMESHEET ADD ENTRY MODAL WINDOW ─── */}
+      {/* ─── ADD ENTRY MODAL WINDOW ─── */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in duration-150">
-          <div className="bg-white w-full max-w-lg rounded-xl border border-slate-200 shadow-xl overflow-hidden transform transition-all scale-100">
-            
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white w-full max-w-lg rounded-xl border border-slate-200 shadow-xl overflow-hidden">
             <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
               <h3 className="font-bold text-slate-900 flex items-center gap-2 text-base">
-                <Clock size={18} className="text-blue-600" />
-                Log Project Work Hours
+                <Clock size={18} className="text-blue-600" /> Log Project Work Hours
               </h3>
-              <button 
-                onClick={() => setIsModalOpen(false)}
-                className="p-1 rounded-lg border border-slate-200 bg-white text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition"
-              >
-                <X size={16} />
-              </button>
+              <button onClick={() => setIsModalOpen(false)} className="p-1 rounded-lg border border-slate-200 bg-white text-slate-400 hover:text-slate-600 transition"><X size={16} /></button>
             </div>
-
             <form onSubmit={handleAddSubmission} className="p-6 space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Date</label>
-                  <input 
-                    type="date" 
-                    required 
-                    value={newDate} 
-                    onChange={(e) => setNewDate(e.target.value)}
-                    className="w-full h-10 px-3 border border-slate-200 rounded-lg text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-slate-900"
-                  />
+                  <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">Date</label>
+                  <input type="date" required value={newDate} onChange={(e) => setNewDate(e.target.value)} className="w-full h-10 px-3 border border-slate-200 rounded-lg text-sm focus:border-blue-500 focus:outline-none" />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Project Scope</label>
-                  <input 
-                    type="text" 
-                    required 
-                    placeholder="e.g. ERP Dashboard" 
-                    value={newProject} 
-                    onChange={(e) => setNewProject(e.target.value)}
-                    className="w-full h-10 px-3 border border-slate-200 rounded-lg text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-slate-900"
-                  />
+                  <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">Project Scope</label>
+                  <input type="text" required placeholder="e.g. ERP Dashboard" value={newProject} onChange={(e) => setNewProject(e.target.value)} className="w-full h-10 px-3 border border-slate-200 rounded-lg text-sm focus:border-blue-500 focus:outline-none" />
                 </div>
               </div>
-
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Module</label>
-                  <input 
-                    type="text" 
-                    placeholder="e.g. Frontend" 
-                    value={newModule} 
-                    onChange={(e) => setNewModule(e.target.value)}
-                    className="w-full h-10 px-3 border border-slate-200 rounded-lg text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-slate-900"
-                  />
+                  <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">Module</label>
+                  <input type="text" placeholder="e.g. Frontend" value={newModule} onChange={(e) => setNewModule(e.target.value)} className="w-full h-10 px-3 border border-slate-200 rounded-lg text-sm focus:border-blue-500 focus:outline-none" />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Scope Category</label>
-                  <select 
-                    value={newType} 
-                    onChange={(e) => setNewType(e.target.value)}
-                    className="w-full h-10 px-2 border border-slate-200 bg-white rounded-lg text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-slate-800"
-                  >
+                  <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">Scope Category</label>
+                  <select value={newType} onChange={(e) => setNewType(e.target.value)} className="w-full h-10 px-2 border border-slate-200 bg-white rounded-lg text-sm focus:border-blue-500 focus:outline-none">
                     <option value="Billable">Billable</option>
                     <option value="Non Billable">Non Billable</option>
                   </select>
                 </div>
               </div>
-
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Task Description</label>
-                <input 
-                  type="text" 
-                  required
-                  placeholder="Describe development task item specifics..." 
-                  value={newTask} 
-                  onChange={(e) => setNewTask(e.target.value)}
-                  className="w-full h-10 px-3 border border-slate-200 rounded-lg text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-slate-900"
-                />
+                <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">Task Description</label>
+                <input type="text" required placeholder="Describe task..." value={newTask} onChange={(e) => setNewTask(e.target.value)} className="w-full h-10 px-3 border border-slate-200 rounded-lg text-sm focus:border-blue-500 focus:outline-none" />
               </div>
-
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Start Time</label>
-                  <input 
-                    type="text" 
-                    placeholder="10:00 AM" 
-                    value={newStart} 
-                    onChange={(e) => setNewStart(e.target.value)}
-                    className="w-full h-10 px-3 border border-slate-200 rounded-lg text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-slate-900"
-                  />
+                  <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">Start Time</label>
+                  <input type="text" placeholder="10:00 AM" value={newStart} onChange={(e) => setNewStart(e.target.value)} className="w-full h-10 px-3 border border-slate-200 rounded-lg text-sm focus:border-blue-500 focus:outline-none" />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">End Time</label>
-                  <input 
-                    type="text" 
-                    placeholder="06:30 PM" 
-                    value={newEnd} 
-                    onChange={(e) => setNewEnd(e.target.value)}
-                    className="w-full h-10 px-3 border border-slate-200 rounded-lg text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-slate-900"
-                  />
+                  <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">End Time</label>
+                  <input type="text" placeholder="06:30 PM" value={newEnd} onChange={(e) => setNewEnd(e.target.value)} className="w-full h-10 px-3 border border-slate-200 rounded-lg text-sm focus:border-blue-500 focus:outline-none" />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Total Hours</label>
-                  <input 
-                    type="number" 
-                    step="0.01"
-                    required
-                    placeholder="8.5" 
-                    value={newHours} 
-                    onChange={(e) => setNewHours(e.target.value)}
-                    className="w-full h-10 px-3 border border-slate-200 rounded-lg text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-slate-900"
-                  />
+                  <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">Total Hours</label>
+                  <input type="number" step="0.01" required placeholder="8.5" value={newHours} onChange={(e) => setNewHours(e.target.value)} className="w-full h-10 px-3 border border-slate-200 rounded-lg text-sm focus:border-blue-500 focus:outline-none" />
                 </div>
               </div>
-
               <div className="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(false)}
-                  className="h-10 px-4 rounded-lg border border-slate-200 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="h-10 px-5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold shadow-sm shadow-blue-500/10 transition"
-                >
-                  Commit Entry
-                </button>
+                <button type="button" onClick={() => setIsModalOpen(false)} className="h-10 px-4 rounded-lg border border-slate-200 text-sm font-semibold text-slate-600 hover:bg-slate-50">Cancel</button>
+                <button type="submit" className="h-10 px-5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold">Commit Entry</button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
 
+      {/* ─── WORKING EDIT ENTRY MODAL WINDOW ─── */}
+      {isEditModalOpen && (
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white w-full max-w-lg rounded-xl border border-slate-200 shadow-xl overflow-hidden">
+            <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+              <h3 className="font-bold text-slate-900 flex items-center gap-2 text-base">
+                <Pencil size={16} className="text-blue-600" /> Modify Logged Parameters
+              </h3>
+              <button onClick={() => setIsEditModalOpen(false)} className="p-1 rounded-lg border border-slate-200 bg-white text-slate-400 hover:text-slate-600 transition"><X size={16} /></button>
+            </div>
+            <form onSubmit={handleEditSubmission} className="p-6 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">Date</label>
+                  <input type="date" required value={newDate} onChange={(e) => setNewDate(e.target.value)} className="w-full h-10 px-3 border border-slate-200 rounded-lg text-sm focus:border-blue-500 focus:outline-none" />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">Project</label>
+                  <input type="text" required value={newProject} onChange={(e) => setNewProject(e.target.value)} className="w-full h-10 px-3 border border-slate-200 rounded-lg text-sm focus:border-blue-500 focus:outline-none" />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">Module</label>
+                  <input type="text" required value={newModule} onChange={(e) => setNewModule(e.target.value)} className="w-full h-10 px-3 border border-slate-200 rounded-lg text-sm focus:border-blue-500 focus:outline-none" />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">Type</label>
+                  <select value={newType} onChange={(e) => setNewType(e.target.value)} className="w-full h-10 px-2 border border-slate-200 bg-white rounded-lg text-sm focus:border-blue-500 focus:outline-none">
+                    <option value="Billable">Billable</option>
+                    <option value="Non Billable">Non Billable</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">Task Log</label>
+                <input type="text" required value={newTask} onChange={(e) => setNewTask(e.target.value)} className="w-full h-10 px-3 border border-slate-200 rounded-lg text-sm focus:border-blue-500 focus:outline-none" />
+              </div>
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">Start</label>
+                  <input type="text" value={newStart} onChange={(e) => setNewStart(e.target.value)} className="w-full h-10 px-3 border border-slate-200 rounded-lg text-sm focus:border-blue-500 focus:outline-none" />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">End</label>
+                  <input type="text" value={newEnd} onChange={(e) => setNewEnd(e.target.value)} className="w-full h-10 px-3 border border-slate-200 rounded-lg text-sm focus:border-blue-500 focus:outline-none" />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">Hours</label>
+                  <input type="number" step="0.01" required value={newHours} onChange={(e) => setNewHours(e.target.value)} className="w-full h-10 px-3 border border-slate-200 rounded-lg text-sm focus:border-blue-500 focus:outline-none" />
+                </div>
+              </div>
+              <div className="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
+                <button type="button" onClick={() => setIsEditModalOpen(false)} className="h-10 px-4 rounded-lg border border-slate-200 text-sm font-semibold text-slate-600 hover:bg-slate-50">Cancel Changes</button>
+                <button type="submit" className="h-10 px-5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-semibold">Save Dynamic Updates</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ─── WORKING VIEW LOG METRIC MODAL ─── */}
+      {isViewModalOpen && selectedRecord && (
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white w-full max-w-md rounded-xl border border-slate-200 shadow-xl overflow-hidden">
+            <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+              <h3 className="font-bold text-slate-900 flex items-center gap-2 text-base">
+                <BriefcaseBusiness size={18} className="text-blue-600" /> Operational Log View
+              </h3>
+              <button onClick={() => setIsViewModalOpen(false)} className="p-1 rounded-lg border border-slate-200 bg-white text-slate-400 hover:text-slate-600 transition"><X size={16} /></button>
+            </div>
+            <div className="p-6 space-y-3.5 text-sm">
+              <div className="grid grid-cols-2 pb-2 border-b border-slate-100"><span className="text-slate-400 font-medium">Logged Date:</span><span className="text-slate-800 font-bold text-right">{selectedRecord.date}</span></div>
+              <div className="grid grid-cols-2 pb-2 border-b border-slate-100"><span className="text-slate-400 font-medium">Project Name:</span><span className="text-blue-600 font-bold text-right">{selectedRecord.project}</span></div>
+              <div className="grid grid-cols-2 pb-2 border-b border-slate-100"><span className="text-slate-400 font-medium">Module Focus:</span><span className="text-slate-800 font-semibold text-right">{selectedRecord.module}</span></div>
+              <div className="pb-2 border-b border-slate-100"><span className="text-slate-400 block font-medium mb-1">Task Breakdown:</span><p className="text-slate-700 font-medium bg-slate-50 p-2.5 rounded-lg border border-slate-200/60 leading-relaxed">{selectedRecord.task}</p></div>
+              <div className="grid grid-cols-3 gap-2 text-center bg-slate-50/70 p-3 rounded-xl border border-slate-100">
+                <div><span className="text-[10px] block font-bold text-slate-400 uppercase">Start</span><span className="text-xs font-bold text-slate-700">{selectedRecord.start}</span></div>
+                <div><span className="text-[10px] block font-bold text-slate-400 uppercase">End</span><span className="text-xs font-bold text-slate-700">{selectedRecord.end}</span></div>
+                <div><span className="text-[10px] block font-bold text-slate-400 uppercase">Hours</span><span className="text-xs font-extrabold text-slate-900">{selectedRecord.hours.toFixed(2)}</span></div>
+              </div>
+              <div className="grid grid-cols-2 pt-2"><span className="text-slate-400 font-medium">Classification:</span><span className={`text-right text-xs font-bold ${selectedRecord.type === "Billable" ? "text-emerald-600" : "text-amber-600"}`}>{selectedRecord.type}</span></div>
+              <div className="pt-4 flex justify-end"><button onClick={() => setIsViewModalOpen(false)} className="h-9 px-4 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold rounded-lg transition">Dismiss Panel</button></div>
+            </div>
           </div>
         </div>
       )}
