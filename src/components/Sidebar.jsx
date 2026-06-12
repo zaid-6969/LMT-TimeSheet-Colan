@@ -98,10 +98,14 @@ const sidebarItems = [
         name: "View Timesheet",
         path: "/timesheet/view",
       },
-      // {
-      //   name: "Timesheet Approval",
-      //   path: "/timesheet/approval",
-      // },
+      {
+        name: "Timesheet Approval",
+        path: "/timesheet/approval",
+      },
+      {
+        name: "Timesheet Edit Request",
+        path: "/timesheet/edit-request",
+      },
     ],
   },
 
@@ -285,14 +289,10 @@ export default function Sidebar() {
             : isTablet
               ? "72px"
               : "270px",
-
           transform:
             isMobile && !mobileOpen ? "translateX(-100%)" : "translateX(0)",
-
           background: "#FFFFFF",
-
           borderRight: "1px solid #E2E8F0",
-
           transition:
             "width 0.3s cubic-bezier(0.4,0,0.2,1), transform 0.3s cubic-bezier(0.4,0,0.2,1)",
         }}
@@ -312,13 +312,9 @@ export default function Sidebar() {
           className="shrink-0 flex items-center"
           style={{
             height: "58px",
-
             padding: isCollapsed ? "0" : "0 22px",
-
             justifyContent: isCollapsed ? "center" : "flex-start",
-
             borderBottom: "1px solid #EEF2F7",
-
             background: "#FFFFFF",
           }}
         >
@@ -342,7 +338,6 @@ export default function Sidebar() {
           className="flex-1 overflow-y-auto py-4"
           style={{
             padding: isCollapsed ? "10px 8px" : "12px 14px",
-
             scrollbarWidth: "thin",
           }}
         >
@@ -351,15 +346,10 @@ export default function Sidebar() {
             <div
               style={{
                 fontSize: "11px",
-
                 fontWeight: "700",
-
                 letterSpacing: "0.08em",
-
                 textTransform: "uppercase",
-
                 color: "#94A3B8",
-
                 padding: "0 12px 14px",
               }}
             >
@@ -401,19 +391,14 @@ export default function Sidebar() {
                       "
                       style={{
                         padding: isCollapsed ? "12px 0" : "10px 12px",
-
                         justifyContent: isCollapsed
                           ? "center"
                           : "space-between",
-
                         background: isActive ? "#F5F9FF" : "transparent",
-
                         border: "1px solid transparent",
-
                         borderLeft: isActive
                           ? "3px solid #2563EB"
                           : "3px solid transparent",
-
                         color: isActive ? "#2563EB" : "#475569",
                       }}
                     >
@@ -426,17 +411,11 @@ export default function Sidebar() {
                         <div
                           style={{
                             width: "32px",
-
                             height: "32px",
-
                             borderRadius: "10px",
-
                             display: "flex",
-
                             alignItems: "center",
-
                             justifyContent: "center",
-
                             background: isActive ? "#EEF4FF" : "transparent",
                           }}
                         >
@@ -453,9 +432,7 @@ export default function Sidebar() {
                           <span
                             style={{
                               fontSize: "14px",
-
                               fontWeight: "500",
-
                               letterSpacing: "-0.01em",
                             }}
                           >
@@ -470,11 +447,9 @@ export default function Sidebar() {
                           size={15}
                           style={{
                             color: "#94A3B8",
-
                             transform: isOpen
                               ? "rotate(180deg)"
                               : "rotate(0deg)",
-
                             transition: "0.2s",
                           }}
                         />
@@ -486,19 +461,12 @@ export default function Sidebar() {
                       <div
                         style={{
                           marginLeft: "30px",
-
                           paddingLeft: "6px",
-
                           marginTop: "4px",
-
                           marginBottom: "6px",
-
                           borderLeft: "1px solid #E2E8F0",
-
                           display: "flex",
-
                           flexDirection: "column",
-
                           gap: "2px",
                         }}
                       >
@@ -508,25 +476,15 @@ export default function Sidebar() {
                             to={subItem.path}
                             style={({ isActive }) => ({
                               display: "flex",
-
                               alignItems: "center",
-
                               justifyContent: "space-between",
-
                               padding: "9px 12px",
-
                               borderRadius: "10px",
-
                               fontSize: "13px",
-
                               fontWeight: "500",
-
                               background: isActive ? "#F7FAFF" : "transparent",
-
                               color: isActive ? "#2563EB" : "#64748B",
-
                               textDecoration: "none",
-
                               transition: "all 0.15s ease",
                             })}
                           >
@@ -538,17 +496,12 @@ export default function Sidebar() {
                                   <div
                                     style={{
                                       width: "7px",
-
                                       height: "7px",
-
                                       borderRadius: "999px",
-
                                       background: isActive
                                         ? "#2563EB"
                                         : "#CBD5E1",
-
                                       transition: "0.2s",
-
                                       flexShrink: 0,
                                     }}
                                   />
@@ -587,21 +540,16 @@ export default function Sidebar() {
                     group
                     flex
                     items-center
-                    rounded-xl
+                    rounded
                     transition-all
                     duration-200
                   "
                   style={({ isActive }) => ({
                     padding: isCollapsed ? "12px 0" : "10px 12px",
-
                     justifyContent: isCollapsed ? "center" : "flex-start",
-
                     gap: isCollapsed ? "0" : "12px",
-
                     background: isActive ? "#F5F9FF" : "transparent",
-
                     border: "1px solid transparent",
-
                     borderLeft: isActive
                       ? "3px solid #2563EB"
                       : "3px solid transparent",
@@ -615,17 +563,11 @@ export default function Sidebar() {
                       <div
                         style={{
                           width: "32px",
-
                           height: "32px",
-
                           borderRadius: "10px",
-
                           display: "flex",
-
                           alignItems: "center",
-
                           justifyContent: "center",
-
                           background: isActive ? "#EEF4FF" : "transparent",
                         }}
                       >
@@ -642,9 +584,7 @@ export default function Sidebar() {
                         <span
                           style={{
                             fontSize: "14px",
-
                             fontWeight: "500",
-
                             letterSpacing: "-0.01em",
                           }}
                         >

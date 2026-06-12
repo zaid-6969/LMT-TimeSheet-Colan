@@ -773,7 +773,7 @@ export default function QAProjectList() {
             <button
               disabled={safePage === 1}
               onClick={() => setCurrentPage((p) => p - 1)}
-              className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 disabled:opacity-40"
+              className="flex h-8 w-8 items-center justify-center rounded border border-slate-300 bg-white text-slate-600 disabled:opacity-40"
             >
               <ChevronLeft size={15} />
             </button>
@@ -782,7 +782,7 @@ export default function QAProjectList() {
               <button
                 key={pg}
                 onClick={() => setCurrentPage(pg)}
-                className={`flex h-9 w-9 items-center justify-center rounded-xl text-sm font-semibold ${
+                className={`flex h-8 w-8 items-center justify-center rounded text-sm font-semibold ${
                   safePage === pg
                     ? "bg-blue-600 text-white"
                     : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
@@ -795,7 +795,7 @@ export default function QAProjectList() {
             <button
               disabled={safePage === totalPages}
               onClick={() => setCurrentPage((p) => p - 1)}
-              className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 disabled:opacity-40"
+              className="flex h-8 w-8 items-center justify-center rounded border border-slate-300 bg-white text-slate-600 disabled:opacity-40"
             >
               <ChevronRight size={15} />
             </button>

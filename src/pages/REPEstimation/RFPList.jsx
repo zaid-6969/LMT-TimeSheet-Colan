@@ -651,8 +651,8 @@ export default function EmployeeRFPPage() {
       <div className="overflow-hidden rounded border border-slate-200 bg-white shadow-sm">
 
   {/* ── FILTER BAR ── */}
-      <div className="flex flex-col gap-3 p-3 border-b border-slate-200 lg:flex-row lg:items-center lg:justify-between">
-        <div className="flex h-10 flex-1 items-center rounded-xl border border-slate-200 bg-white px-4 focus-within:border-blue-500">
+      <div className="flex flex-col gap-3 px-3 py-2 border-b border-slate-200 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex h-8 flex-1 items-center rounded-lg border border-slate-200 bg-white px-4 focus-within:border-blue-500">
           <Search size={14} className="text-slate-400" />
           <input
             value={search}
@@ -666,7 +666,7 @@ export default function EmployeeRFPPage() {
           <select
             value={status}
             onChange={(e) => { setStatus(e.target.value); setCurrentPage(1); }}
-            className="h-10 rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 outline-none focus:border-blue-500"
+            className="h-8 rounded-lg border border-slate-200 bg-white px-1 text-sm font-medium text-slate-700 outline-none focus:border-blue-500"
           >
             <option value="All">All Status</option>
             <option value="Pending">Pending</option>
@@ -677,7 +677,7 @@ export default function EmployeeRFPPage() {
           <select
             value={priority}
             onChange={(e) => { setPriority(e.target.value); setCurrentPage(1); }}
-            className="h-10 rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 outline-none focus:border-blue-500"
+            className="h-8 rounded-lg border border-slate-200 bg-white px-1 text-sm font-medium text-slate-700 outline-none focus:border-blue-500"
           >
             <option value="All">All Priority</option>
             <option value="High">High</option>
@@ -819,18 +819,18 @@ export default function EmployeeRFPPage() {
 
         {/* Footer / Pagination */}
         {filteredData.length > 0 && (
-          <div className="flex flex-wrap items-center justify-between gap-4 border-t border-slate-200 bg-slate-50/50 px-6 py-2">
+          <div className="flex flex-wrap items-center justify-between gap-4 border-t border-slate-200 bg-slate-50/50 px-6 py-1">
             <p className="text-sm text-slate-500">
               Showing{" "}
               <span className="font-semibold text-slate-700">{(safePage - 1) * itemsPerPage + 1}</span> to{" "}
               <span className="font-semibold text-slate-700">{Math.min(safePage * itemsPerPage, filteredData.length)}</span> of{" "}
               <span className="font-semibold text-slate-700">{filteredData.length}</span> records
             </p>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
               <button
                 disabled={safePage === 1}
                 onClick={() => setCurrentPage((p) => p - 1)}
-                className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 disabled:opacity-40"
+                className="flex h-8 w-8 items-center justify-center rounded border border-slate-300 bg-white text-slate-600 disabled:opacity-40"
               >
                 <ChevronLeft size={15} />
               </button>
@@ -838,7 +838,7 @@ export default function EmployeeRFPPage() {
                 <button
                   key={pg}
                   onClick={() => setCurrentPage(pg)}
-                  className={`flex h-9 w-9 items-center justify-center rounded-xl text-sm font-semibold ${
+                  className={`flex h-8 w-8 items-center justify-center rounded text-sm font-semibold ${
                     safePage === pg
                       ? "bg-blue-600 text-white"
                       : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
@@ -850,7 +850,7 @@ export default function EmployeeRFPPage() {
               <button
                 disabled={safePage === totalPages}
                 onClick={() => setCurrentPage((p) => p + 1)}
-                className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 disabled:opacity-40"
+                className="flex h-8 w-8 items-center justify-center rounded border border-slate-300 bg-white text-slate-600 disabled:opacity-40"
               >
                 <ChevronRight size={15} />
               </button>

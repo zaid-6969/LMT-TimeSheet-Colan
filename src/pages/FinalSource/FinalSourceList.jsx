@@ -331,7 +331,7 @@ export default function FinalSourceList() {
               <option value="v3">v3.x</option>
             </select>
 
-            <button onClick={handleReset} className="flex h-8 items-center gap-2 bg-white px-2 text-sm text-slate-600 hover:text-rose-500">
+            <button onClick={handleReset} className="flex h-8 items-center gap-2 bg-white px-2 text-sm text-slate-600 hover:text-rose-580">
               <RefreshCcw size={15} />
             </button>
           </div>
@@ -456,7 +456,7 @@ export default function FinalSourceList() {
             <button
               disabled={safePage === 1}
               onClick={() => setCurrentPage((p) => p - 1)}
-              className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 disabled:opacity-40"
+              className="flex h-8 w-8 items-center justify-center rounded border border-slate-300 bg-white text-slate-600 disabled:opacity-40"
             >
               <ChevronLeft size={15} />
             </button>
@@ -465,7 +465,7 @@ export default function FinalSourceList() {
               <button
                 key={pg}
                 onClick={() => setCurrentPage(pg)}
-                className={`flex h-9 w-9 items-center justify-center rounded-xl text-sm font-semibold ${
+                className={`flex h-8 w-8 items-center justify-center rounded text-sm font-semibold ${
                   safePage === pg ? "bg-blue-600 text-white" : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
                 }`}
               >
@@ -476,7 +476,7 @@ export default function FinalSourceList() {
             <button
               disabled={safePage === totalPages}
               onClick={() => setCurrentPage((p) => p - 1)}
-              className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 disabled:opacity-40"
+              className="flex h-8 w-8 items-center justify-center rounded border border-slate-300 bg-white text-slate-600 disabled:opacity-40"
             >
               <ChevronRight size={15} />
             </button>
